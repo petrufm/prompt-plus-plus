@@ -1,0 +1,16 @@
+{
+  "name": "prompt-plus-plus",
+  "type": "module",
+  "scripts": {
+    "antlr": "antlr4ts -visitor -Xexact-output-dir -o core/parser core/grammar/*.g4"
+  },
+  "dependencies": {
+    "antlr4ts": "^0.5.0-alpha.4"
+  },
+  "devDependencies": {
+    "antlr4ts-cli": "^0.5.0-alpha.4",
+    "tsx": "^4.x.x",
+    "@types/node": "^25.x.x",
+    "typescript": "^6.x.x"
+  }
+}

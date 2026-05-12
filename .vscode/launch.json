@@ -1,0 +1,13 @@
+{
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug",
+      "runtimeArgs": ["--import", "tsx"],
+      "program": "${workspaceFolder}/cli/prompt++.ts",
+      "args": ["tests/data/input.prompt++"],
+      "console": "integratedTerminal"
+    }
+  ]
+}

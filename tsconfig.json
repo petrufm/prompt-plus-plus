@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "types": ["node"],
+    "strict": true,
+
+    "outDir": "dist", 
+    "rootDir": ".",
+    "sourceMap": true
+  }
+}

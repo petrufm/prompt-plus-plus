@@ -7,6 +7,7 @@ import { Prompt_plus_plusContext } from "./prompt_plus_plus_parser";
 import { Prompt_templateContext } from "./prompt_plus_plus_parser";
 import { Prompt_template_substitutionContext } from "./prompt_plus_plus_parser";
 import { Prompt_template_substitution_arg_listContext } from "./prompt_plus_plus_parser";
+import { Prompt_template_substitution_actual_argumentContext } from "./prompt_plus_plus_parser";
 import { Named_prompt_template_definitionContext } from "./prompt_plus_plus_parser";
 import { Prompt_template_definition_arg_listContext } from "./prompt_plus_plus_parser";
 
@@ -46,6 +47,13 @@ export interface prompt_plus_plus_parserVisitor<Result> extends ParseTreeVisitor
 	 * @return the visitor result
 	 */
 	visitPrompt_template_substitution_arg_list?: (ctx: Prompt_template_substitution_arg_listContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `prompt_plus_plus_parser.prompt_template_substitution_actual_argument`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPrompt_template_substitution_actual_argument?: (ctx: Prompt_template_substitution_actual_argumentContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `prompt_plus_plus_parser.named_prompt_template_definition`.

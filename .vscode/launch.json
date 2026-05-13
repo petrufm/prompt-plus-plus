@@ -6,7 +6,7 @@
       "name": "Debug",
       "runtimeArgs": ["--import", "tsx"],
       "program": "${workspaceFolder}/cli/prompt++.ts",
-      "args": ["tests/data/input.prompt++"],
+      "args": ["tests/testData1/input.prompt++"],
       "console": "integratedTerminal"
     }
   ]

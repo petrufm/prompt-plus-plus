@@ -1,0 +1,12 @@
+Natural_language_text_fragment=1
+Prompt_template_substitution_operator=2
+Prompt_template_definition_operator=3
+Template_identifier=4
+Prompt_template_substitution_resolution_operator=5
+Arg_list_begin=6
+Prompt_template_substitution_template_ws=7
+Prompt_template_substitution_arg_list_natural_language_text_fragment=8
+Arg_list_end=9
+Arg_list_separator=10
+Prompt_template_definition_body_end=11
+':'=5

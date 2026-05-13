@@ -43,13 +43,14 @@ export class prompt_plus_plus_parser extends Parser {
 	public static readonly RULE_prompt_template = 1;
 	public static readonly RULE_prompt_template_substitution = 2;
 	public static readonly RULE_prompt_template_substitution_arg_list = 3;
-	public static readonly RULE_named_prompt_template_definition = 4;
-	public static readonly RULE_prompt_template_definition_arg_list = 5;
+	public static readonly RULE_prompt_template_substitution_actual_argument = 4;
+	public static readonly RULE_named_prompt_template_definition = 5;
+	public static readonly RULE_prompt_template_definition_arg_list = 6;
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
 		"prompt_plus_plus", "prompt_template", "prompt_template_substitution", 
-		"prompt_template_substitution_arg_list", "named_prompt_template_definition", 
-		"prompt_template_definition_arg_list",
+		"prompt_template_substitution_arg_list", "prompt_template_substitution_actual_argument", 
+		"named_prompt_template_definition", "prompt_template_definition_arg_list",
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
@@ -95,31 +96,31 @@ export class prompt_plus_plus_parser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 15;
+			this.state = 17;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === prompt_plus_plus_parser.Prompt_template_definition_operator) {
 				{
 				{
-				this.state = 12;
+				this.state = 14;
 				this.named_prompt_template_definition();
 				}
 				}
-				this.state = 17;
+				this.state = 19;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 19;
+			this.state = 21;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === prompt_plus_plus_parser.Natural_language_text_fragment || _la === prompt_plus_plus_parser.Prompt_template_substitution_operator) {
 				{
-				this.state = 18;
+				this.state = 20;
 				this.prompt_template();
 				}
 			}
 
-			this.state = 21;
+			this.state = 23;
 			this.match(prompt_plus_plus_parser.EOF);
 			}
 		}
@@ -145,23 +146,23 @@ export class prompt_plus_plus_parser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 25;
+			this.state = 27;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
-				this.state = 25;
+				this.state = 27;
 				this._errHandler.sync(this);
 				switch (this._input.LA(1)) {
 				case prompt_plus_plus_parser.Natural_language_text_fragment:
 					{
-					this.state = 23;
+					this.state = 25;
 					this.match(prompt_plus_plus_parser.Natural_language_text_fragment);
 					}
 					break;
 				case prompt_plus_plus_parser.Prompt_template_substitution_operator:
 					{
-					this.state = 24;
+					this.state = 26;
 					this.prompt_template_substitution();
 					}
 					break;
@@ -169,7 +170,7 @@ export class prompt_plus_plus_parser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				this.state = 27;
+				this.state = 29;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === prompt_plus_plus_parser.Natural_language_text_fragment || _la === prompt_plus_plus_parser.Prompt_template_substitution_operator);
@@ -198,41 +199,41 @@ export class prompt_plus_plus_parser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 29;
+			this.state = 31;
 			this.match(prompt_plus_plus_parser.Prompt_template_substitution_operator);
-			this.state = 34;
+			this.state = 36;
 			this._errHandler.sync(this);
 			_alt = this.interpreter.adaptivePredict(this._input, 4, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
 				if (_alt === 1) {
 					{
 					{
-					this.state = 30;
+					this.state = 32;
 					this.match(prompt_plus_plus_parser.Template_identifier);
-					this.state = 31;
+					this.state = 33;
 					this.match(prompt_plus_plus_parser.Prompt_template_substitution_resolution_operator);
 					}
 					}
 				}
-				this.state = 36;
+				this.state = 38;
 				this._errHandler.sync(this);
 				_alt = this.interpreter.adaptivePredict(this._input, 4, this._ctx);
 			}
-			this.state = 37;
+			this.state = 39;
 			this.match(prompt_plus_plus_parser.Template_identifier);
-			this.state = 38;
-			this.match(prompt_plus_plus_parser.Arg_list_begin);
 			this.state = 40;
+			this.match(prompt_plus_plus_parser.Arg_list_begin);
+			this.state = 42;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === prompt_plus_plus_parser.Prompt_template_substitution_operator || _la === prompt_plus_plus_parser.Prompt_template_substitution_arg_list_natural_language_text_fragment) {
 				{
-				this.state = 39;
+				this.state = 41;
 				this.prompt_template_substitution_arg_list();
 				}
 			}
 
-			this.state = 42;
+			this.state = 44;
 			this.match(prompt_plus_plus_parser.Arg_list_end);
 			}
 		}
@@ -259,41 +260,65 @@ export class prompt_plus_plus_parser extends Parser {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 46;
+			this.prompt_template_substitution_actual_argument();
+			this.state = 51;
+			this._errHandler.sync(this);
+			_alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
+			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
+				if (_alt === 1) {
+					{
+					{
+					this.state = 47;
+					this.match(prompt_plus_plus_parser.Arg_list_separator);
+					this.state = 48;
+					this.prompt_template_substitution_arg_list();
+					}
+					}
+				}
+				this.state = 53;
+				this._errHandler.sync(this);
+				_alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
+			}
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public prompt_template_substitution_actual_argument(): Prompt_template_substitution_actual_argumentContext {
+		let _localctx: Prompt_template_substitution_actual_argumentContext = new Prompt_template_substitution_actual_argumentContext(this._ctx, this.state);
+		this.enterRule(_localctx, 8, prompt_plus_plus_parser.RULE_prompt_template_substitution_actual_argument);
+		try {
+			this.state = 56;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case prompt_plus_plus_parser.Prompt_template_substitution_arg_list_natural_language_text_fragment:
+				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 44;
+				this.state = 54;
 				this.match(prompt_plus_plus_parser.Prompt_template_substitution_arg_list_natural_language_text_fragment);
 				}
 				break;
 			case prompt_plus_plus_parser.Prompt_template_substitution_operator:
+				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 45;
+				this.state = 55;
 				this.prompt_template_substitution();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
-			}
-			this.state = 52;
-			this._errHandler.sync(this);
-			_alt = this.interpreter.adaptivePredict(this._input, 7, this._ctx);
-			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
-				if (_alt === 1) {
-					{
-					{
-					this.state = 48;
-					this.match(prompt_plus_plus_parser.Arg_list_separator);
-					this.state = 49;
-					this.prompt_template_substitution_arg_list();
-					}
-					}
-				}
-				this.state = 54;
-				this._errHandler.sync(this);
-				_alt = this.interpreter.adaptivePredict(this._input, 7, this._ctx);
-			}
 			}
 		}
 		catch (re) {
@@ -313,32 +338,32 @@ export class prompt_plus_plus_parser extends Parser {
 	// @RuleVersion(0)
 	public named_prompt_template_definition(): Named_prompt_template_definitionContext {
 		let _localctx: Named_prompt_template_definitionContext = new Named_prompt_template_definitionContext(this._ctx, this.state);
-		this.enterRule(_localctx, 8, prompt_plus_plus_parser.RULE_named_prompt_template_definition);
+		this.enterRule(_localctx, 10, prompt_plus_plus_parser.RULE_named_prompt_template_definition);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 55;
+			this.state = 58;
 			this.match(prompt_plus_plus_parser.Prompt_template_definition_operator);
-			this.state = 56;
-			this.match(prompt_plus_plus_parser.Template_identifier);
-			this.state = 57;
-			this.match(prompt_plus_plus_parser.Arg_list_begin);
 			this.state = 59;
+			this.match(prompt_plus_plus_parser.Template_identifier);
+			this.state = 60;
+			this.match(prompt_plus_plus_parser.Arg_list_begin);
+			this.state = 62;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === prompt_plus_plus_parser.Template_identifier) {
 				{
-				this.state = 58;
+				this.state = 61;
 				this.prompt_template_definition_arg_list();
 				}
 			}
 
-			this.state = 61;
+			this.state = 64;
 			this.match(prompt_plus_plus_parser.Arg_list_end);
-			this.state = 62;
+			this.state = 65;
 			this.prompt_template();
-			this.state = 63;
+			this.state = 66;
 			this.match(prompt_plus_plus_parser.Prompt_template_definition_body_end);
 			}
 		}
@@ -359,28 +384,28 @@ export class prompt_plus_plus_parser extends Parser {
 	// @RuleVersion(0)
 	public prompt_template_definition_arg_list(): Prompt_template_definition_arg_listContext {
 		let _localctx: Prompt_template_definition_arg_listContext = new Prompt_template_definition_arg_listContext(this._ctx, this.state);
-		this.enterRule(_localctx, 10, prompt_plus_plus_parser.RULE_prompt_template_definition_arg_list);
+		this.enterRule(_localctx, 12, prompt_plus_plus_parser.RULE_prompt_template_definition_arg_list);
 		try {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 65;
+			this.state = 68;
 			this.match(prompt_plus_plus_parser.Template_identifier);
-			this.state = 70;
+			this.state = 73;
 			this._errHandler.sync(this);
 			_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
 				if (_alt === 1) {
 					{
 					{
-					this.state = 66;
+					this.state = 69;
 					this.match(prompt_plus_plus_parser.Arg_list_separator);
-					this.state = 67;
+					this.state = 70;
 					this.prompt_template_definition_arg_list();
 					}
 					}
 				}
-				this.state = 72;
+				this.state = 75;
 				this._errHandler.sync(this);
 				_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
 			}
@@ -402,38 +427,39 @@ export class prompt_plus_plus_parser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\rL\x04\x02\t" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\rO\x04\x02\t" +
 		"\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t" +
-		"\x07\x03\x02\x07\x02\x10\n\x02\f\x02\x0E\x02\x13\v\x02\x03\x02\x05\x02" +
-		"\x16\n\x02\x03\x02\x03\x02\x03\x03\x03\x03\x06\x03\x1C\n\x03\r\x03\x0E" +
-		"\x03\x1D\x03\x04\x03\x04\x03\x04\x07\x04#\n\x04\f\x04\x0E\x04&\v\x04\x03" +
-		"\x04\x03\x04\x03\x04\x05\x04+\n\x04\x03\x04\x03\x04\x03\x05\x03\x05\x05" +
-		"\x051\n\x05\x03\x05\x03\x05\x07\x055\n\x05\f\x05\x0E\x058\v\x05\x03\x06" +
-		"\x03\x06\x03\x06\x03\x06\x05\x06>\n\x06\x03\x06\x03\x06\x03\x06\x03\x06" +
-		"\x03\x07\x03\x07\x03\x07\x07\x07G\n\x07\f\x07\x0E\x07J\v\x07\x03\x07\x02" +
-		"\x02\x02\b\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x02\x02\x02O\x02" +
-		"\x11\x03\x02\x02\x02\x04\x1B\x03\x02\x02\x02\x06\x1F\x03\x02\x02\x02\b" +
-		"0\x03\x02\x02\x02\n9\x03\x02\x02\x02\fC\x03\x02\x02\x02\x0E\x10\x05\n" +
-		"\x06\x02\x0F\x0E\x03\x02\x02\x02\x10\x13\x03\x02\x02\x02\x11\x0F\x03\x02" +
-		"\x02\x02\x11\x12\x03\x02\x02\x02\x12\x15\x03\x02\x02\x02\x13\x11\x03\x02" +
-		"\x02\x02\x14\x16\x05\x04\x03\x02\x15\x14\x03\x02\x02\x02\x15\x16\x03\x02" +
-		"\x02\x02\x16\x17\x03\x02\x02\x02\x17\x18\x07\x02\x02\x03\x18\x03\x03\x02" +
-		"\x02\x02\x19\x1C\x07\x03\x02\x02\x1A\x1C\x05\x06\x04\x02\x1B\x19\x03\x02" +
-		"\x02\x02\x1B\x1A\x03\x02\x02\x02\x1C\x1D\x03\x02\x02\x02\x1D\x1B\x03\x02" +
-		"\x02\x02\x1D\x1E\x03\x02\x02\x02\x1E\x05\x03\x02\x02\x02\x1F$\x07\x04" +
-		"\x02\x02 !\x07\x06\x02\x02!#\x07\x07\x02\x02\" \x03\x02\x02\x02#&\x03" +
-		"\x02\x02\x02$\"\x03\x02\x02\x02$%\x03\x02\x02\x02%\'\x03\x02\x02\x02&" +
-		"$\x03\x02\x02\x02\'(\x07\x06\x02\x02(*\x07\b\x02\x02)+\x05\b\x05\x02*" +
-		")\x03\x02\x02\x02*+\x03\x02\x02\x02+,\x03\x02\x02\x02,-\x07\v\x02\x02" +
-		"-\x07\x03\x02\x02\x02.1\x07\n\x02\x02/1\x05\x06\x04\x020.\x03\x02\x02" +
-		"\x020/\x03\x02\x02\x0216\x03\x02\x02\x0223\x07\f\x02\x0235\x05\b\x05\x02" +
-		"42\x03\x02\x02\x0258\x03\x02\x02\x0264\x03\x02\x02\x0267\x03\x02\x02\x02" +
-		"7\t\x03\x02\x02\x0286\x03\x02\x02\x029:\x07\x05\x02\x02:;\x07\x06\x02" +
-		"\x02;=\x07\b\x02\x02<>\x05\f\x07\x02=<\x03\x02\x02\x02=>\x03\x02\x02\x02" +
-		">?\x03\x02\x02\x02?@\x07\v\x02\x02@A\x05\x04\x03\x02AB\x07\r\x02\x02B" +
-		"\v\x03\x02\x02\x02CH\x07\x06\x02\x02DE\x07\f\x02\x02EG\x05\f\x07\x02F" +
-		"D\x03\x02\x02\x02GJ\x03\x02\x02\x02HF\x03\x02\x02\x02HI\x03\x02\x02\x02" +
-		"I\r\x03\x02\x02\x02JH\x03\x02\x02\x02\f\x11\x15\x1B\x1D$*06=H";
+		"\x07\x04\b\t\b\x03\x02\x07\x02\x12\n\x02\f\x02\x0E\x02\x15\v\x02\x03\x02" +
+		"\x05\x02\x18\n\x02\x03\x02\x03\x02\x03\x03\x03\x03\x06\x03\x1E\n\x03\r" +
+		"\x03\x0E\x03\x1F\x03\x04\x03\x04\x03\x04\x07\x04%\n\x04\f\x04\x0E\x04" +
+		"(\v\x04\x03\x04\x03\x04\x03\x04\x05\x04-\n\x04\x03\x04\x03\x04\x03\x05" +
+		"\x03\x05\x03\x05\x07\x054\n\x05\f\x05\x0E\x057\v\x05\x03\x06\x03\x06\x05" +
+		"\x06;\n\x06\x03\x07\x03\x07\x03\x07\x03\x07\x05\x07A\n\x07\x03\x07\x03" +
+		"\x07\x03\x07\x03\x07\x03\b\x03\b\x03\b\x07\bJ\n\b\f\b\x0E\bM\v\b\x03\b" +
+		"\x02\x02\x02\t\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x02\x02" +
+		"\x02Q\x02\x13\x03\x02\x02\x02\x04\x1D\x03\x02\x02\x02\x06!\x03\x02\x02" +
+		"\x02\b0\x03\x02\x02\x02\n:\x03\x02\x02\x02\f<\x03\x02\x02\x02\x0EF\x03" +
+		"\x02\x02\x02\x10\x12\x05\f\x07\x02\x11\x10\x03\x02\x02\x02\x12\x15\x03" +
+		"\x02\x02\x02\x13\x11\x03\x02\x02\x02\x13\x14\x03\x02\x02\x02\x14\x17\x03" +
+		"\x02\x02\x02\x15\x13\x03\x02\x02\x02\x16\x18\x05\x04\x03\x02\x17\x16\x03" +
+		"\x02\x02\x02\x17\x18\x03\x02\x02\x02\x18\x19\x03\x02\x02\x02\x19\x1A\x07" +
+		"\x02\x02\x03\x1A\x03\x03\x02\x02\x02\x1B\x1E\x07\x03\x02\x02\x1C\x1E\x05" +
+		"\x06\x04\x02\x1D\x1B\x03\x02\x02\x02\x1D\x1C\x03\x02\x02\x02\x1E\x1F\x03" +
+		"\x02\x02\x02\x1F\x1D\x03\x02\x02\x02\x1F \x03\x02\x02\x02 \x05\x03\x02" +
+		"\x02\x02!&\x07\x04\x02\x02\"#\x07\x06\x02\x02#%\x07\x07\x02\x02$\"\x03" +
+		"\x02\x02\x02%(\x03\x02\x02\x02&$\x03\x02\x02\x02&\'\x03\x02\x02\x02\'" +
+		")\x03\x02\x02\x02(&\x03\x02\x02\x02)*\x07\x06\x02\x02*,\x07\b\x02\x02" +
+		"+-\x05\b\x05\x02,+\x03\x02\x02\x02,-\x03\x02\x02\x02-.\x03\x02\x02\x02" +
+		"./\x07\v\x02\x02/\x07\x03\x02\x02\x0205\x05\n\x06\x0212\x07\f\x02\x02" +
+		"24\x05\b\x05\x0231\x03\x02\x02\x0247\x03\x02\x02\x0253\x03\x02\x02\x02" +
+		"56\x03\x02\x02\x026\t\x03\x02\x02\x0275\x03\x02\x02\x028;\x07\n\x02\x02" +
+		"9;\x05\x06\x04\x02:8\x03\x02\x02\x02:9\x03\x02\x02\x02;\v\x03\x02\x02" +
+		"\x02<=\x07\x05\x02\x02=>\x07\x06\x02\x02>@\x07\b\x02\x02?A\x05\x0E\b\x02" +
+		"@?\x03\x02\x02\x02@A\x03\x02\x02\x02AB\x03\x02\x02\x02BC\x07\v\x02\x02" +
+		"CD\x05\x04\x03\x02DE\x07\r\x02\x02E\r\x03\x02\x02\x02FK\x07\x06\x02\x02" +
+		"GH\x07\f\x02\x02HJ\x05\x0E\b\x02IG\x03\x02\x02\x02JM\x03\x02\x02\x02K" +
+		"I\x03\x02\x02\x02KL\x03\x02\x02\x02L\x0F\x03\x02\x02\x02MK\x03\x02\x02" +
+		"\x02\f\x13\x17\x1D\x1F&,5:@K";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!prompt_plus_plus_parser.__ATN) {
@@ -588,9 +614,8 @@ export class Prompt_template_substitutionContext extends ParserRuleContext {
 
 
 export class Prompt_template_substitution_arg_listContext extends ParserRuleContext {
-	public Prompt_template_substitution_arg_list_natural_language_text_fragment(): TerminalNode | undefined { return this.tryGetToken(prompt_plus_plus_parser.Prompt_template_substitution_arg_list_natural_language_text_fragment, 0); }
-	public prompt_template_substitution(): Prompt_template_substitutionContext | undefined {
-		return this.tryGetRuleContext(0, Prompt_template_substitutionContext);
+	public prompt_template_substitution_actual_argument(): Prompt_template_substitution_actual_argumentContext {
+		return this.getRuleContext(0, Prompt_template_substitution_actual_argumentContext);
 	}
 	public Arg_list_separator(): TerminalNode[];
 	public Arg_list_separator(i: number): TerminalNode;
@@ -631,6 +656,39 @@ export class Prompt_template_substitution_arg_listContext extends ParserRuleCont
 	public accept<Result>(visitor: prompt_plus_plus_parserVisitor<Result>): Result {
 		if (visitor.visitPrompt_template_substitution_arg_list) {
 			return visitor.visitPrompt_template_substitution_arg_list(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
+export class Prompt_template_substitution_actual_argumentContext extends ParserRuleContext {
+	public Prompt_template_substitution_arg_list_natural_language_text_fragment(): TerminalNode | undefined { return this.tryGetToken(prompt_plus_plus_parser.Prompt_template_substitution_arg_list_natural_language_text_fragment, 0); }
+	public prompt_template_substitution(): Prompt_template_substitutionContext | undefined {
+		return this.tryGetRuleContext(0, Prompt_template_substitutionContext);
+	}
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return prompt_plus_plus_parser.RULE_prompt_template_substitution_actual_argument; }
+	// @Override
+	public enterRule(listener: prompt_plus_plus_parserListener): void {
+		if (listener.enterPrompt_template_substitution_actual_argument) {
+			listener.enterPrompt_template_substitution_actual_argument(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: prompt_plus_plus_parserListener): void {
+		if (listener.exitPrompt_template_substitution_actual_argument) {
+			listener.exitPrompt_template_substitution_actual_argument(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: prompt_plus_plus_parserVisitor<Result>): Result {
+		if (visitor.visitPrompt_template_substitution_actual_argument) {
+			return visitor.visitPrompt_template_substitution_actual_argument(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

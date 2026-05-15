@@ -1,16 +1,13 @@
 {
-  "name": "prompt-plus-plus",
-  "type": "module",
+  "private": true,
+  "workspaces": [
+    "extensions/chrome",
+    "prompt++"
+  ],
   "scripts": {
-    "antlr": "antlr4ts -visitor -Xexact-output-dir -o core/parser core/grammar/*.g4"
+    "build": "npm run build --workspace=prompt++ && npm run build --workspace=extensions/chrome"
   },
   "dependencies": {
-    "antlr4ts": "^0.5.0-alpha.4"
-  },
-  "devDependencies": {
-    "antlr4ts-cli": "^0.5.0-alpha.4",
-    "tsx": "^4.x.x",
-    "@types/node": "^25.x.x",
-    "typescript": "^6.x.x"
+    "esbuild": "^0.28.0"
   }
 }

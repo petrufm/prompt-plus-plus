@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "prompt-plus-plus-chrome-extension",
+  "version": "1.0",
+  "description": "Interprets and replaces text using prompt++",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "scripting",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "dist/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["dist/content.js"]
+    }
+  ],
+  "options_page": "options.html"
+}

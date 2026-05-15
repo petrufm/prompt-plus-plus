@@ -1,0 +1,15 @@
+{
+  "name": "prompt-plus-plus-chrome-extension",
+  "version": "1.0.0",
+  "dependencies": {
+    "prompt-plus-plus": "*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.33",
+    "esbuild": "^0.27.7",
+    "typescript": "^6.x.x"
+  },
+  "scripts": {
+    "build": "tsc && npx esbuild src/background.ts --bundle --outfile=dist/background.js --platform=browser"
+  }
+}

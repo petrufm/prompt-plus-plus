@@ -1,0 +1,19 @@
+{
+  "name": "prompt-plus-plus",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "antlr-ng": "^1.0.10"
+  },
+  "devDependencies": {
+    "tsx": "^4.x.x",
+    "@types/node": "^25.x.x",
+    "typescript": "^6.x.x"
+  },
+  "scripts": {
+    "antlr": "antlr-ng -Dlanguage=TypeScript --generate-visitor -o ./src/parser ./src/grammar/*.g4",
+    "build": "tsc"
+  }
+}

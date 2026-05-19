@@ -13,7 +13,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "promptpp_substitute",
     parentId: "promptpp_root",
-    title: "Interprete",
+    title: "Interpret",
     contexts: ["editable"]
   });
 });

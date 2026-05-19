@@ -13,7 +13,13 @@ function interprete(fileInput: string, input: string): string {
     const parser = new prompt_plus_plus_parser(tokens);
     const tree = parser.prompt_plus_plus();
     if (parser.numberOfSyntaxErrors == 0) {
-      const interpreter = new PromptPlusPlusInterpreter(process.cwd());
+      const interpreter = new PromptPlusPlusInterpreter((module: string) : string | null => {
+          const fullFilePath = process.cwd() + "/" + module.concat(".prompt++");
+          if (fs.existsSync(fullFilePath) && fs.statSync(fullFilePath).isFile()) {
+            return fs.readFileSync(fullFilePath, "utf-8");
+          }
+          return null;
+      });
       return (tree.accept(interpreter) as string[])[0];
     }
   } catch (error : any) {

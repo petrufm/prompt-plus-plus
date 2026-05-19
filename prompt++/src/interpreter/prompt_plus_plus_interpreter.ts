@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { ErrorNode, ParseTree, TerminalNode, CharStream, CommonTokenStream } from "antlr4ng";
 import { Prompt_plus_plusContext, Prompt_templateContext, Prompt_template_substitutionContext, Prompt_template_substitution_arg_listContext, Named_prompt_template_definitionContext, Prompt_template_definition_arg_listContext, prompt_plus_plus_parser, Prompt_template_substitution_actual_argumentContext } from "../parser/prompt_plus_plus_parser";
 import { prompt_plus_plus_parserVisitor } from "../parser/prompt_plus_plus_parserVisitor";
@@ -20,17 +18,17 @@ export class SemanticalError extends Error {}
 
 export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<string[]> {
   
-  private prompTemplatePathAbsolute: string;
+  private moduleSearchHandler:  (module: string) => string | null;
 
   private loaded_named_prompt_template: Map<string, NamedPromptTemplate> = new Map();
 
   private interpretationStack = new Array<ProptTemplateInterpretationFrame>();
-
-  constructor(templateAbsolutePath: string) {
+  
+  constructor(moduleSearchHandler : (module: string) => string | null) {
     
     super();
       
-    this.prompTemplatePathAbsolute = templateAbsolutePath;
+    this.moduleSearchHandler = moduleSearchHandler;
 
     this.visitPrompt_plus_plus = (ctx: Prompt_plus_plusContext) : string[] => {
       for (const named_prompt_template_definition of ctx.named_prompt_template_definition()) {
@@ -68,19 +66,18 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
         //Substitute with a named template
         let template = this.loaded_named_prompt_template.get(customizedTemplatePath);
         if (!template) {
-          const fullFilePath = this.prompTemplatePathAbsolute + "/" + ctx.Template_identifier().slice(0, -1).flatMap(id => id.accept(this)).join("/").concat(".prompt++");
-          if (fs.existsSync(fullFilePath) && fs.statSync(fullFilePath).isFile()) {
-            let input = fs.readFileSync(fullFilePath, "utf-8");
-            const charStream = CharStream.fromString(input);
-            const lexer = new prompt_plus_plus_lexer(charStream);
-            const tokens = new CommonTokenStream(lexer);
-            const parser = new prompt_plus_plus_parser(tokens);
-            const tree = parser.prompt_plus_plus();
-            if (parser.numberOfSyntaxErrors == 0) {
-                //(tree.accept(this) as string[])[0]
-            } else {
-              throw new SemanticalError(`Syntax errors in prompt template module: ${fullFilePath}`);
-            }
+          let input = this.moduleSearchHandler(ctx.Template_identifier().slice(0, -1).flatMap(id => id.accept(this)).join("/"));    
+            if (input !== null) {
+              const charStream = CharStream.fromString(input);
+              const lexer = new prompt_plus_plus_lexer(charStream);
+              const tokens = new CommonTokenStream(lexer);
+              const parser = new prompt_plus_plus_parser(tokens);
+              const tree = parser.prompt_plus_plus();
+              if (parser.numberOfSyntaxErrors == 0) {
+                (tree.accept(this) as string[])[0];
+              } else {
+                throw new SemanticalError(`Syntax errors in prompt template module: ${customizedTemplatePath}`);
+              }
             template = this.loaded_named_prompt_template.get(customizedTemplatePath);
           }
         }
@@ -142,19 +139,19 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
       return tree.accept(this) ?? [];
     }
 
-    this.visitChildren = (node: ParseTree): string[] => {
-      let result = "";
-      for (let i = 0; i < node.getChildCount(); i++) {
-        result += node.getChild(i)!.accept(this);
+    this.visitPrompt_template_substitution_actual_argument = (ctx: Prompt_template_substitution_actual_argumentContext): string[] => {
+      let result:string[] = [];
+      for (const child of ctx.children) {
+        result.push((child.accept(this) as string[])[0]);
       }
-      return [result];
+      return result;
     }
 
-    this.visitErrorNode = (node: ErrorNode): string[] => {
+    this.visitChildren = (node: ParseTree): string[] => {
       throw new Error('Method not implemented.');
     }
 
-    this.visitPrompt_template_substitution_actual_argument = (ctx: Prompt_template_substitution_actual_argumentContext): string[] => {
+    this.visitErrorNode = (node: ErrorNode): string[] => {
       throw new Error('Method not implemented.');
     }
   }

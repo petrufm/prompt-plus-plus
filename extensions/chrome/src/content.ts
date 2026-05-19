@@ -1,20 +1,18 @@
-function getActiveInput() {
-  const el = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
-  if (el) {
-    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "P") {
-      return el;
-    }
-  }
-  return null;
-}
-
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-  if (msg.type === "GET_TEXT") {
-    const el = getActiveInput();
-    sendResponse({ text: el?.value ?? "" });
+  if (msg.type === "PROMPTPP_GET_TEXT") {
+    if (document.activeElement instanceof HTMLInputElement 
+      || document.activeElement instanceof HTMLTextAreaElement) {
+      sendResponse({ text: document.activeElement.value });
+    } else if (document.activeElement instanceof HTMLDivElement) {
+      sendResponse({ text: document.activeElement.innerText });
+     }
   }
-  if (msg.type === "SET_TEXT") {
-    const el = getActiveInput();
-    if (el) el.value = msg.text;
+  if (msg.type === "PROMPTPP_SET_TEXT") {
+    if (document.activeElement instanceof HTMLInputElement 
+      || document.activeElement instanceof HTMLTextAreaElement) {
+      document.activeElement.value = msg.text;
+    } else if (document.activeElement instanceof HTMLDivElement) {
+      document.activeElement.innerText = msg.text;
+    }
   }
 });

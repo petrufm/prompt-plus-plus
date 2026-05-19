@@ -33,26 +33,37 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       const parser = new prompt_plus_plus_parser(tokens);
       const tree = parser.prompt_plus_plus();
       if (parser.numberOfSyntaxErrors === 0) {
-        const interpreter = new PromptPlusPlusInterpreter((searchedModule : string) : string | null => {
-          const root = chrome.storage.local.get("promptppTemplatePath");
-          root.then((root) => {
-            const parts = searchedModule.split("/");
-            let currentDir : any = root;
-            for (let i = 0; i < parts.length - 1; i++) {
-              currentDir = currentDir.getDirectoryHandle(parts[i]);
-            }
-            const fileHandle = currentDir.getFileHandle(parts[parts.length - 1]);
-            const file = fileHandle.getFile();
-            return file.text();
-          });
+        const interpreter = new PromptPlusPlusInterpreter(async (searchedModule : string) : Promise<string | null> => {
+          const root = await chrome.storage.local.get("promptppTemplatePath");
+          if (root.promptppTemplatePath) {
+            // const parts = searchedModule.split("/");
+            // let currentDir : any = root.promptppTemplatePath;
+            // for (let i = 0; i < parts.length - 1; i++) {
+            //   currentDir = await currentDir.getDirectoryHandle(parts[i]);
+            // }
+            // const fileHandle = await currentDir.getFileHandle(parts[parts.length - 1]);
+            // const file = await fileHandle.getFile();
+            // return await file.text();
+          }
           return null;
         });
-        const result = (tree.accept(interpreter) as string[])[0];
-        //Replace with the result
-        chrome.tabs.sendMessage(tab.id, {
-          type: "PROMPTPP_SET_TEXT",
-          text: result
-        });
+         try {
+          const result = (await tree.accept(interpreter) as string[])[0];
+          //Replace with the result
+          chrome.tabs.sendMessage(tab.id, {
+            type: "PROMPTPP_SET_TEXT",
+            text: result
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: (msg: string) => {
+              alert("Error interpreting prompt template - " + msg);
+            },
+            args: [message]
+          });
+        }
       }
     } 
 });

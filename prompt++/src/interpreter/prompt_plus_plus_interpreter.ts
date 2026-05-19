@@ -1,4 +1,4 @@
-import { ErrorNode, ParseTree, TerminalNode, CharStream, CommonTokenStream } from "antlr4ng";
+import { TerminalNode, CharStream, CommonTokenStream } from "antlr4ng";
 import { Prompt_plus_plusContext, Prompt_templateContext, Prompt_template_substitutionContext, Prompt_template_substitution_arg_listContext, Named_prompt_template_definitionContext, Prompt_template_definition_arg_listContext, prompt_plus_plus_parser, Prompt_template_substitution_actual_argumentContext } from "../parser/prompt_plus_plus_parser";
 import { prompt_plus_plus_parserVisitor } from "../parser/prompt_plus_plus_parserVisitor";
 import { prompt_plus_plus_lexer } from '../parser/prompt_plus_plus_lexer';
@@ -16,9 +16,9 @@ interface ProptTemplateInterpretationFrame {
 
 export class SemanticalError extends Error {}
 
-export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<string[]> {
+export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Promise<string[]>> {
   
-  private moduleSearchHandler: (module: string) => string | null;
+  private moduleSearchHandler: (module: string) => Promise<string | null>;
 
   private loaded_named_prompt_template: Map<string, NamedPromptTemplate> = new Map();
 
@@ -26,35 +26,47 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
 
   private moduleStack = new Array<string>();
 
-  constructor(moduleSearchHandler : (module: string) => string | null) {
+  constructor(moduleSearchHandler : (module: string) => Promise<string | null>) {
     
     super();
       
     this.moduleSearchHandler = moduleSearchHandler;
 
-    this.visitPrompt_plus_plus = (ctx: Prompt_plus_plusContext) : string[] => {
+    this.visitPrompt_plus_plus = async (ctx: Prompt_plus_plusContext) : Promise<string[]> => {
       for (const named_prompt_template_definition of ctx.named_prompt_template_definition()) {
-        named_prompt_template_definition.accept(this);
+        await named_prompt_template_definition.accept(this);
       }
-      return [(ctx.prompt_template()?.accept(this) as string[] || [""])[0]];
+      return [(await ctx.prompt_template()?.accept(this) as string[] || [""])[0]];
     }
 
-    this.visitPrompt_template = (ctx: Prompt_templateContext) : string[] => {
+    this.visitPrompt_template = async (ctx: Prompt_templateContext) : Promise<string[]> => {
       let result: string = "";
       for (const child of ctx.children) {
-        result += (child.accept(this) as string[])[0];
+        result += (await child.accept(this) as string[])[0];
       }
       return [result];
     }
 
-    this.visitTerminal = (node: TerminalNode): string[] => {
+    this.visitTerminal = async (node: TerminalNode): Promise<string[]> => {
       return [node.getText()];
     }
     
-    this.visitPrompt_template_substitution = (ctx: Prompt_template_substitutionContext): string[] => {
-      let modulePath = ctx.Template_identifier().slice(0, ctx.Template_identifier().length-1).flatMap(id => id.accept(this)).join("/");
-      let templatePath = ctx.Template_identifier().flatMap(id => id.accept(this)).join("/");
-      let argsActualValues = ctx.prompt_template_substitution_arg_list()?.accept(this) || [];
+    this.visitPrompt_template_substitution = async (ctx: Prompt_template_substitutionContext): Promise<string[]> => {
+      let modulePath = "";
+      for (let i = 0; i < ctx.Template_identifier().length - 1; i++) {
+        modulePath += (await ctx.Template_identifier(i)?.accept(this) as string[])[0];
+        if (i < ctx.Template_identifier().length - 2) {
+          modulePath += "/";
+        }
+      }
+      let templatePath = ""; 
+      for (let i = 0; i < ctx.Template_identifier().length; i++) {
+        templatePath += (await ctx.Template_identifier(i)?.accept(this) as string[])[0];
+        if (i < ctx.Template_identifier().length - 1) {
+          templatePath += "/";
+        }
+      }
+      let argsActualValues = await ctx.prompt_template_substitution_arg_list()?.accept(this) || [];
 
       //Template lookup
       if (this.interpretationStack.length > 0 && this.interpretationStack.at(-1)?.formalParameters.includes(templatePath)) {
@@ -69,7 +81,7 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
         //Substitute with a named template
         let template = this.loaded_named_prompt_template.get(templatePath);
         if (!template) {
-          let input = this.moduleSearchHandler(modulePath);    
+           let input = await this.moduleSearchHandler(modulePath);   
             if (input !== null) {
               const charStream = CharStream.fromString(input);
               const lexer = new prompt_plus_plus_lexer(charStream);
@@ -78,7 +90,7 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
               const tree = parser.prompt_plus_plus();
               if (parser.numberOfSyntaxErrors == 0) {
                 this.moduleStack.push(modulePath);
-                tree.accept(this);
+                await tree.accept(this);
                 this.moduleStack.pop();
               } else {
                 throw new SemanticalError(`Syntax errors in prompt template module: ${modulePath}`);
@@ -95,23 +107,23 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
           throw new SemanticalError(`Template ${templatePath} expects ${template.formalParameters.length} arguments, got ${argsActualValues.length}`);
         } 
         this.interpretationStack.push({ formalParameters: template.formalParameters, actualParameters: argsActualValues });
-        let result = (template.body.accept(this) as string[])[0];  
+        let result = (await template.body.accept(this) as string[])[0];  
         this.interpretationStack.pop();
         return [result];
       }
     }
 
-    this.visitPrompt_template_substitution_arg_list = (ctx: Prompt_template_substitution_arg_listContext): string[] => {
+    this.visitPrompt_template_substitution_arg_list = async (ctx: Prompt_template_substitution_arg_listContext): Promise<string[]> => {
       let result:string[] = [];
-      result.push((ctx.prompt_template_substitution_actual_argument().accept(this) as string[])[0]);
+      result.push((await ctx.prompt_template_substitution_actual_argument().accept(this) as string[])[0]);
       for (const child of ctx.prompt_template_substitution_arg_list()) {
-        result.push((child.accept(this) as string[])[0]);
+        result.push((await child.accept(this) as string[])[0]);
       }
       return result;
     }
 
-    this.visitNamed_prompt_template_definition = (ctx: Named_prompt_template_definitionContext): string[] => {
-      let formalParams: string[] = ctx.prompt_template_definition_arg_list()?.accept(this) as string[];
+    this.visitNamed_prompt_template_definition = async (ctx: Named_prompt_template_definitionContext): Promise<string[]> => {
+      let formalParams: string[] = await ctx.prompt_template_definition_arg_list()?.accept(this) as string[];
       
       /*Semantical check: Ensure formal argument names are unique*/
       if (new Set(formalParams).size !== formalParams.length) {
@@ -134,17 +146,19 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
       return [];
     }
 
-    this.visitPrompt_template_definition_arg_list = (ctx: Prompt_template_definition_arg_listContext) : string[] => {
-      return [
-        ...(ctx.Template_identifier().accept(this) as string[]),
-        ...ctx.prompt_template_definition_arg_list().map(arg => arg.accept(this) as string[]).flat()
-      ];
+    this.visitPrompt_template_definition_arg_list = async (ctx: Prompt_template_definition_arg_listContext): Promise<string[]> => {
+      let result : string[] = [];
+      result.push((await ctx.Template_identifier().accept(this) as string[])[0]);
+      for (const child of ctx.prompt_template_definition_arg_list()) {
+        result.push((await child.accept(this) as string[])[0]);
+      }
+      return result;
     }
 
-    this.visitPrompt_template_substitution_actual_argument = (ctx: Prompt_template_substitution_actual_argumentContext): string[] => {
+    this.visitPrompt_template_substitution_actual_argument = async (ctx: Prompt_template_substitution_actual_argumentContext): Promise<string[]> => {
       let result:string[] = [];
       for (const child of ctx.children) {
-        result.push((child.accept(this) as string[])[0]);
+        result.push((await child.accept(this) as string[])[0]);
       }
       return result;
     }

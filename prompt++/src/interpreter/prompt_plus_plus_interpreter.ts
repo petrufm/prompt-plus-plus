@@ -18,12 +18,14 @@ export class SemanticalError extends Error {}
 
 export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<string[]> {
   
-  private moduleSearchHandler:  (module: string) => string | null;
+  private moduleSearchHandler: (module: string) => string | null;
 
   private loaded_named_prompt_template: Map<string, NamedPromptTemplate> = new Map();
 
   private interpretationStack = new Array<ProptTemplateInterpretationFrame>();
-  
+
+  private moduleStack = new Array<string>();
+
   constructor(moduleSearchHandler : (module: string) => string | null) {
     
     super();
@@ -34,15 +36,15 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
       for (const named_prompt_template_definition of ctx.named_prompt_template_definition()) {
         named_prompt_template_definition.accept(this);
       }
-      return [(ctx.prompt_template()?.accept(this) as string[])[0]];
+      return [(ctx.prompt_template()?.accept(this) as string[] || [""])[0]];
     }
 
     this.visitPrompt_template = (ctx: Prompt_templateContext) : string[] => {
-      let result: string[] = [];
+      let result: string = "";
       for (const child of ctx.children) {
-        result.push((child.accept(this) as string[])[0]);
+        result += (child.accept(this) as string[])[0];
       }
-      return result;
+      return [result];
     }
 
     this.visitTerminal = (node: TerminalNode): string[] => {
@@ -50,23 +52,24 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
     }
     
     this.visitPrompt_template_substitution = (ctx: Prompt_template_substitutionContext): string[] => {
-      let customizedTemplatePath = ctx.Template_identifier().flatMap(id => id.accept(this)).join("/");
+      let modulePath = ctx.Template_identifier().slice(0, ctx.Template_identifier().length-1).flatMap(id => id.accept(this)).join("/");
+      let templatePath = ctx.Template_identifier().flatMap(id => id.accept(this)).join("/");
       let argsActualValues = ctx.prompt_template_substitution_arg_list()?.accept(this) || [];
 
       //Template lookup
-      if (this.interpretationStack.length > 0 && this.interpretationStack.at(-1)?.formalParameters.includes(customizedTemplatePath)) {
+      if (this.interpretationStack.length > 0 && this.interpretationStack.at(-1)?.formalParameters.includes(templatePath)) {
         //Substitute with an actual parameter
         //Semantical check: Ensure the number of actual arguments is 0
         if (argsActualValues.length !== 0) {
-          throw new SemanticalError(`Template ${customizedTemplatePath} expects 0 arguments, got ${argsActualValues.length}`);
+          throw new SemanticalError(`Template ${templatePath} expects 0 arguments, got ${argsActualValues.length}`);
         }
         let top = this.interpretationStack.at(-1);
-        return [top!.actualParameters[top!.formalParameters.indexOf(customizedTemplatePath)]];
+        return [top!.actualParameters[top!.formalParameters.indexOf(templatePath)]];
       } else {
         //Substitute with a named template
-        let template = this.loaded_named_prompt_template.get(customizedTemplatePath);
+        let template = this.loaded_named_prompt_template.get(templatePath);
         if (!template) {
-          let input = this.moduleSearchHandler(ctx.Template_identifier().slice(0, -1).flatMap(id => id.accept(this)).join("/"));    
+          let input = this.moduleSearchHandler(modulePath);    
             if (input !== null) {
               const charStream = CharStream.fromString(input);
               const lexer = new prompt_plus_plus_lexer(charStream);
@@ -74,25 +77,27 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
               const parser = new prompt_plus_plus_parser(tokens);
               const tree = parser.prompt_plus_plus();
               if (parser.numberOfSyntaxErrors == 0) {
-                (tree.accept(this) as string[])[0];
+                this.moduleStack.push(modulePath);
+                tree.accept(this);
+                this.moduleStack.pop();
               } else {
-                throw new SemanticalError(`Syntax errors in prompt template module: ${customizedTemplatePath}`);
+                throw new SemanticalError(`Syntax errors in prompt template module: ${modulePath}`);
               }
-            template = this.loaded_named_prompt_template.get(customizedTemplatePath);
+            template = this.loaded_named_prompt_template.get(templatePath);
           }
         }
         if (!template) {
-          throw new SemanticalError(`Undefined template: ${customizedTemplatePath}`);
+          throw new SemanticalError(`Undefined template: ${templatePath}`);
         }
 
         //Semantical check: Ensure the number of actual arguments matches the number of formal parameters
         if (argsActualValues.length !== template.formalParameters.length) {
-          throw new SemanticalError(`Template ${customizedTemplatePath} expects ${template.formalParameters.length} arguments, got ${argsActualValues.length}`);
+          throw new SemanticalError(`Template ${templatePath} expects ${template.formalParameters.length} arguments, got ${argsActualValues.length}`);
         } 
         this.interpretationStack.push({ formalParameters: template.formalParameters, actualParameters: argsActualValues });
-        let result = template.body.accept(this) as string[];  
+        let result = (template.body.accept(this) as string[])[0];  
         this.interpretationStack.pop();
-        return result;
+        return [result];
       }
     }
 
@@ -118,9 +123,10 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
         throw new SemanticalError(`Duplicate template name: ${ctx.Template_identifier().getText()}`);
       }
 
-      this.loaded_named_prompt_template.set(ctx.Template_identifier().getText(), 
+      const templateFullPath = (this.moduleStack.length > 0 ? this.moduleStack.at(-1) + "/" : "") + ctx.Template_identifier().getText();
+      this.loaded_named_prompt_template.set(templateFullPath, 
         {
-          name: ctx.Template_identifier().getText(),
+          name: templateFullPath,
           formalParameters: formalParams,
           body: ctx.prompt_template()
         });
@@ -135,24 +141,12 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<st
       ];
     }
 
-    this.visit = (tree: ParseTree): string[] => {
-      return tree.accept(this) ?? [];
-    }
-
     this.visitPrompt_template_substitution_actual_argument = (ctx: Prompt_template_substitution_actual_argumentContext): string[] => {
       let result:string[] = [];
       for (const child of ctx.children) {
         result.push((child.accept(this) as string[])[0]);
       }
       return result;
-    }
-
-    this.visitChildren = (node: ParseTree): string[] => {
-      throw new Error('Method not implemented.');
-    }
-
-    this.visitErrorNode = (node: ErrorNode): string[] => {
-      throw new Error('Method not implemented.');
     }
   }
 }

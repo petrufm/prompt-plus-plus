@@ -14,7 +14,7 @@ function interprete(fileInput: string, input: string): string {
     const tree = parser.prompt_plus_plus();
     if (parser.numberOfSyntaxErrors == 0) {
       const interpreter = new PromptPlusPlusInterpreter((module: string) : string | null => {
-          const fullFilePath = process.cwd() + "/" + module.concat(".prompt++");
+          const fullFilePath = process.cwd() + "/" + module + ".prompt++";
           if (fs.existsSync(fullFilePath) && fs.statSync(fullFilePath).isFile()) {
             return fs.readFileSync(fullFilePath, "utf-8");
           }

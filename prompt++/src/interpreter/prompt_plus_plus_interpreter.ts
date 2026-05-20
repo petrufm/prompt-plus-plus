@@ -123,7 +123,7 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
     }
 
     this.visitNamed_prompt_template_definition = async (ctx: Named_prompt_template_definitionContext): Promise<string[]> => {
-      let formalParams: string[] = await ctx.prompt_template_definition_arg_list()?.accept(this) as string[];
+      let formalParams: string[] = (await ctx.prompt_template_definition_arg_list()?.accept(this) || []) as string[];
       
       /*Semantical check: Ensure formal argument names are unique*/
       if (new Set(formalParams).size !== formalParams.length) {

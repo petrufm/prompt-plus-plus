@@ -1,3 +1,5 @@
+import { openDB } from "idb";
+
 import { CharStream, CommonTokenStream } from "antlr4ng";
 import { prompt_plus_plus_lexer } from "prompt-plus-plus";
 import { prompt_plus_plus_parser } from "prompt-plus-plus";
@@ -34,20 +36,37 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       const tree = parser.prompt_plus_plus();
       if (parser.numberOfSyntaxErrors === 0) {
         const interpreter = new PromptPlusPlusInterpreter(async (searchedModule : string) : Promise<string | null> => {
-          const root = await chrome.storage.local.get("promptppTemplatePath");
-          if (root.promptppTemplatePath) {
-            // const parts = searchedModule.split("/");
-            // let currentDir : any = root.promptppTemplatePath;
-            // for (let i = 0; i < parts.length - 1; i++) {
-            //   currentDir = await currentDir.getDirectoryHandle(parts[i]);
-            // }
-            // const fileHandle = await currentDir.getFileHandle(parts[parts.length - 1]);
-            // const file = await fileHandle.getFile();
-            // return await file.text();
+          const db = await openDB("promptpp", 1, {
+            upgrade(db) {
+              db.createObjectStore("handles");
+            }
+          });
+          const root = await db.get("handles", "promptppTemplatePath");
+          if (root) {
+            try {
+              const parts = searchedModule.split("/");
+              const fileName = parts.pop()!;
+              let dir = root;
+              for (const folder of parts) {
+                dir = await dir.getDirectoryHandle(folder, { create: false });
+              }
+              const fileHandle = await dir.getFileHandle(fileName + ".prompt++");
+              const file = await fileHandle.getFile();
+              return await file.text();
+            } catch (error) {
+              // Just for debugging
+              // chrome.scripting.executeScript({
+              //   target: { tabId: tab.id ?? 0 },
+              //   func: (msg: any) => {
+              //     alert("Error - " + msg);
+              //   },
+              //   args: [error instanceof Error ? error.message : String(error)]
+              // });
+            }
           }
           return null;
         });
-         try {
+        try {
           const result = (await tree.accept(interpreter) as string[])[0];
           //Replace with the result
           chrome.tabs.sendMessage(tab.id, {
@@ -59,7 +78,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
           chrome.scripting.executeScript({
             target: { tabId: tab.id },
             func: (msg: string) => {
-              alert("Error interpreting prompt template - " + msg);
+              alert("Error interpreting the prompt template - " + msg);
             },
             args: [message]
           });

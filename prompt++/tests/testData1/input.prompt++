@@ -1,4 +1,4 @@
 #quiz<number>a quiz of `number<> questions
 
 I am `university:teaching:professor<Politehnica University of Timisoara,Object-Oriented Programming>. 
-I would like to generate for me a `quiz<5>.
+I would like to generate for me a `quiz<5> `university:teaching:question<>.

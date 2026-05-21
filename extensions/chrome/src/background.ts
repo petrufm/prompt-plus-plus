@@ -41,27 +41,30 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
               db.createObjectStore("handles");
             }
           });
-          const root = await db.get("handles", "promptppTemplatePath");
-          if (root) {
-            try {
-              const parts = searchedModule.split("/");
-              const fileName = parts.pop()!;
-              let dir = root;
-              for (const folder of parts) {
-                dir = await dir.getDirectoryHandle(folder, { create: false });
+          const stored = await db.get("handles", "promptppTemplatePath");
+          if (stored) {
+            const roots = Array.isArray(stored) ? stored : [stored];
+            for (const root of roots) {
+              try {
+                const parts = searchedModule.split("/");
+                const fileName = parts.pop()!;
+                let dir = root;
+                for (const folder of parts) {
+                  dir = await dir.getDirectoryHandle(folder, { create: false });
+                }
+                const fileHandle = await dir.getFileHandle(fileName + ".prompt++");
+                const file = await fileHandle.getFile();
+                return await file.text();
+              } catch (error) {
+                // Just for debugging
+                // chrome.scripting.executeScript({
+                //   target: { tabId: tab.id ?? 0 },
+                //   func: (msg: any) => {
+                //     alert("Error - " + msg);
+                //   },
+                //   args: [error instanceof Error ? error.message : String(error)]
+                // });
               }
-              const fileHandle = await dir.getFileHandle(fileName + ".prompt++");
-              const file = await fileHandle.getFile();
-              return await file.text();
-            } catch (error) {
-              // Just for debugging
-              // chrome.scripting.executeScript({
-              //   target: { tabId: tab.id ?? 0 },
-              //   func: (msg: any) => {
-              //     alert("Error - " + msg);
-              //   },
-              //   args: [error instanceof Error ? error.message : String(error)]
-              // });
             }
           }
           return null;

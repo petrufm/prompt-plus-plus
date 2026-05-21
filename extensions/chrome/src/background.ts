@@ -41,9 +41,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
               db.createObjectStore("handles");
             }
           });
-          const stored = await db.get("handles", "promptppTemplatePath");
-          if (stored) {
-            const roots = Array.isArray(stored) ? stored : [stored];
+          const storedHandles = await db.get("handles", "promptppTemplatePath");
+          const storedUrls = await db.get("handles", "promptppTemplateUrls");
+          // Try local folders roots first
+          if (storedHandles) {
+            const roots = Array.isArray(storedHandles) ? storedHandles : [storedHandles];
             for (const root of roots) {
               try {
                 const parts = searchedModule.split("/");
@@ -56,14 +58,27 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
                 const file = await fileHandle.getFile();
                 return await file.text();
               } catch (error) {
-                // Just for debugging
-                // chrome.scripting.executeScript({
-                //   target: { tabId: tab.id ?? 0 },
-                //   func: (msg: any) => {
-                //     alert("Error - " + msg);
-                //   },
-                //   args: [error instanceof Error ? error.message : String(error)]
-                // });
+                // try next local root
+              }
+            }
+          }
+          // Then try URLs
+          if (storedUrls) {
+            const urls = Array.isArray(storedUrls) ? storedUrls : [storedUrls];
+            for (const rootUrlCandidate of urls) {
+              try {
+                const rootUrl = rootUrlCandidate.endsWith("/") ? rootUrlCandidate : `${rootUrlCandidate}/`;
+                const parts = searchedModule.split("/");
+                const fileName = parts.pop()!;
+                const moduleFilePath = parts.length > 0 ? `${parts.join("/")}/${fileName}.prompt++` : `${fileName}.prompt++`;
+                const url = new URL(moduleFilePath, rootUrl);
+                url.searchParams.set("_cb", String(Date.now()));
+                const response = await fetch(url.href, { cache: "no-store" });
+                if (response.ok) {
+                  return await response.text();
+                }
+              } catch (error) {
+                // try next url root
               }
             }
           }

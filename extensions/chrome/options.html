@@ -7,12 +7,16 @@
 
   <body>
     <h2>prompt++ Settings</h2>
-
-    <p id="prompt++_settings_status">No Prompt Template Path Set</p>
-
-    <button id="prompt++_settings_pickFolder">Add Local Folder to Prompt Template Path</button>
-    <button id="prompt++_settings_clearAll">Clear All Prompt Template Path(s)</button>
-
+    <h3>Prompt Template Path</h3>
+      <button id="prompt++_settings_clearAll">Clear All</button>
+    <h3>Local Folders in Prompt Template Path (searched always first)</h3>
+      <p id="prompt++_settings_handlersStatus">No Local Folder Set</p>
+      <button id="prompt++_settings_pickFolder">Add Folder</button>
+    <h3>URL(s) in Prompt Template Path</h3>
+      <p id="prompt++_settings_urlStatus">No URL Set</p>
+      <ul id="prompt++_settings_urlList"></ul>
+      <input id="prompt++_settings_urlInput" type="text" placeholder="https://example.com/templates" />
+      <button id="prompt++_settings_addUrl">Add URL</button>
     <script src="./dist/options.js"></script>
   </body>
 </html>

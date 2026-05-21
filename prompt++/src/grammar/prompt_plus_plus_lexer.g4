@@ -1,7 +1,7 @@
 lexer grammar prompt_plus_plus_lexer;
 
 fragment Fragment_template_identifier:
-    (~[ \t\r\n`#<>,:])+ ;
+    ([a-zA-Z][a-zA-Z0-9])+ ;
 fragment Fragment_arg_list_begin:
     '<' ;
 fragment Fragment_arg_list_end:

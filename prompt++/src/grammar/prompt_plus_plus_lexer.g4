@@ -1,7 +1,7 @@
 lexer grammar prompt_plus_plus_lexer;
 
 fragment Fragment_template_identifier:
-    ([a-zA-Z][a-zA-Z0-9])+ ;
+    [a-zA-Z][a-zA-Z0-9]* ;
 fragment Fragment_arg_list_begin:
     '<' ;
 fragment Fragment_arg_list_end:
@@ -39,7 +39,7 @@ Prompt_template_substitution_template_ws:
 mode PROMPT_TEMPLATE_SUBSTITUTION_ARG_LIST;
 
 Prompt_template_substitution_arg_list_natural_language_text_fragment: 
-    (~[`#<>,:])+ ;
+    (~[`#<>,:])+ -> type(Natural_language_text_fragment);
 
 Arg_list_end:
     Fragment_arg_list_end  -> popMode, popMode;

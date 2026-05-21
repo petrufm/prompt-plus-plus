@@ -18,10 +18,9 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     public static readonly Prompt_template_substitution_resolution_operator = 5;
     public static readonly Arg_list_begin = 6;
     public static readonly Prompt_template_substitution_template_ws = 7;
-    public static readonly Prompt_template_substitution_arg_list_natural_language_text_fragment = 8;
-    public static readonly Arg_list_end = 9;
-    public static readonly Arg_list_separator = 10;
-    public static readonly Prompt_template_definition_body_end = 11;
+    public static readonly Arg_list_end = 8;
+    public static readonly Arg_list_separator = 9;
+    public static readonly Prompt_template_definition_body_end = 10;
     public static readonly RULE_prompt_plus_plus = 0;
     public static readonly RULE_prompt_template = 1;
     public static readonly RULE_prompt_template_substitution = 2;
@@ -37,8 +36,8 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     public static readonly symbolicNames = [
         null, "Natural_language_text_fragment", "Prompt_template_substitution_operator", 
         "Prompt_template_definition_operator", "Template_identifier", "Prompt_template_substitution_resolution_operator", 
-        "Arg_list_begin", "Prompt_template_substitution_template_ws", "Prompt_template_substitution_arg_list_natural_language_text_fragment", 
-        "Arg_list_end", "Arg_list_separator", "Prompt_template_definition_body_end"
+        "Arg_list_begin", "Prompt_template_substitution_template_ws", "Arg_list_end", 
+        "Arg_list_separator", "Prompt_template_definition_body_end"
     ];
     public static readonly ruleNames = [
         "prompt_plus_plus", "prompt_template", "prompt_template_substitution", 
@@ -193,7 +192,7 @@ export class prompt_plus_plus_parser extends antlr.Parser {
             this.state = 42;
             this.errorHandler.sync(this);
             _la = this.tokenStream.LA(1);
-            if (_la === 2 || _la === 8) {
+            if (_la === 1 || _la === 2) {
                 {
                 this.state = 41;
                 this.prompt_template_substitution_arg_list();
@@ -266,11 +265,11 @@ export class prompt_plus_plus_parser extends antlr.Parser {
             this.state = 56;
             this.errorHandler.sync(this);
             switch (this.tokenStream.LA(1)) {
-            case prompt_plus_plus_parser.Prompt_template_substitution_arg_list_natural_language_text_fragment:
+            case prompt_plus_plus_parser.Natural_language_text_fragment:
                 this.enterOuterAlt(localContext, 1);
                 {
                 this.state = 54;
-                this.match(prompt_plus_plus_parser.Prompt_template_substitution_arg_list_natural_language_text_fragment);
+                this.match(prompt_plus_plus_parser.Natural_language_text_fragment);
                 }
                 break;
             case prompt_plus_plus_parser.Prompt_template_substitution_operator:
@@ -385,7 +384,7 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     }
 
     public static readonly _serializedATN: number[] = [
-        4,1,11,77,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        4,1,10,77,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
         6,1,0,5,0,16,8,0,10,0,12,0,19,9,0,1,0,3,0,22,8,0,1,0,1,0,1,1,1,1,
         4,1,28,8,1,11,1,12,1,29,1,2,1,2,1,2,5,2,35,8,2,10,2,12,2,38,9,2,
         1,2,1,2,1,2,3,2,43,8,2,1,2,1,2,1,3,1,3,1,3,5,3,50,8,3,10,3,12,3,
@@ -400,15 +399,15 @@ export class prompt_plus_plus_parser extends antlr.Parser {
         3,1,0,0,0,31,36,5,2,0,0,32,33,5,4,0,0,33,35,5,5,0,0,34,32,1,0,0,
         0,35,38,1,0,0,0,36,34,1,0,0,0,36,37,1,0,0,0,37,39,1,0,0,0,38,36,
         1,0,0,0,39,40,5,4,0,0,40,42,5,6,0,0,41,43,3,6,3,0,42,41,1,0,0,0,
-        42,43,1,0,0,0,43,44,1,0,0,0,44,45,5,9,0,0,45,5,1,0,0,0,46,51,3,8,
-        4,0,47,48,5,10,0,0,48,50,3,6,3,0,49,47,1,0,0,0,50,53,1,0,0,0,51,
-        49,1,0,0,0,51,52,1,0,0,0,52,7,1,0,0,0,53,51,1,0,0,0,54,57,5,8,0,
-        0,55,57,3,4,2,0,56,54,1,0,0,0,56,55,1,0,0,0,57,9,1,0,0,0,58,59,5,
-        3,0,0,59,60,5,4,0,0,60,62,5,6,0,0,61,63,3,12,6,0,62,61,1,0,0,0,62,
-        63,1,0,0,0,63,64,1,0,0,0,64,65,5,9,0,0,65,66,3,2,1,0,66,67,5,11,
-        0,0,67,11,1,0,0,0,68,73,5,4,0,0,69,70,5,10,0,0,70,72,3,12,6,0,71,
-        69,1,0,0,0,72,75,1,0,0,0,73,71,1,0,0,0,73,74,1,0,0,0,74,13,1,0,0,
-        0,75,73,1,0,0,0,10,17,21,27,29,36,42,51,56,62,73
+        42,43,1,0,0,0,43,44,1,0,0,0,44,45,5,8,0,0,45,5,1,0,0,0,46,51,3,8,
+        4,0,47,48,5,9,0,0,48,50,3,6,3,0,49,47,1,0,0,0,50,53,1,0,0,0,51,49,
+        1,0,0,0,51,52,1,0,0,0,52,7,1,0,0,0,53,51,1,0,0,0,54,57,5,1,0,0,55,
+        57,3,4,2,0,56,54,1,0,0,0,56,55,1,0,0,0,57,9,1,0,0,0,58,59,5,3,0,
+        0,59,60,5,4,0,0,60,62,5,6,0,0,61,63,3,12,6,0,62,61,1,0,0,0,62,63,
+        1,0,0,0,63,64,1,0,0,0,64,65,5,8,0,0,65,66,3,2,1,0,66,67,5,10,0,0,
+        67,11,1,0,0,0,68,73,5,4,0,0,69,70,5,9,0,0,70,72,3,12,6,0,71,69,1,
+        0,0,0,72,75,1,0,0,0,73,71,1,0,0,0,73,74,1,0,0,0,74,13,1,0,0,0,75,
+        73,1,0,0,0,10,17,21,27,29,36,42,51,56,62,73
     ];
 
     private static __ATN: antlr.ATN;
@@ -626,8 +625,8 @@ export class Prompt_template_substitution_actual_argumentContext extends antlr.P
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public Prompt_template_substitution_arg_list_natural_language_text_fragment(): antlr.TerminalNode | null {
-        return this.getToken(prompt_plus_plus_parser.Prompt_template_substitution_arg_list_natural_language_text_fragment, 0);
+    public Natural_language_text_fragment(): antlr.TerminalNode | null {
+        return this.getToken(prompt_plus_plus_parser.Natural_language_text_fragment, 0);
     }
     public prompt_template_substitution(): Prompt_template_substitutionContext | null {
         return this.getRuleContext(0, Prompt_template_substitutionContext);

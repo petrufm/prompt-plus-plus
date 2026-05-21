@@ -81,7 +81,8 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
         //Substitute with a named template
         let template = this.loaded_named_prompt_template.get(templatePath);
         if (!template) {
-           let input = await this.moduleSearchHandler(modulePath);   
+          if (modulePath.length > 0) {
+            let input = await this.moduleSearchHandler(modulePath);   
             if (input !== null) {
               const charStream = CharStream.fromString(input);
               const lexer = new prompt_plus_plus_lexer(charStream);
@@ -95,7 +96,8 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
               } else {
                 throw new SemanticalError(`Syntax errors in prompt template module: ${modulePath}`);
               }
-            template = this.loaded_named_prompt_template.get(templatePath);
+              template = this.loaded_named_prompt_template.get(templatePath);
+            }
           }
         }
         if (!template) {

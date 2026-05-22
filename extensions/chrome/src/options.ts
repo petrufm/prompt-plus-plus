@@ -18,10 +18,10 @@ async function init() {
   const storedUrls = await db.get("handles", "promptppTemplateUrls");
   if (storedHandles) {
     const roots = Array.isArray(storedHandles) ? storedHandles : [storedHandles];
-    promptpp_settings_handlerStatus.textContent = `${roots.length} folder Prompt Template Path(s) Set`;
+    promptpp_settings_handlerStatus.textContent = `${roots.length} folder(s) Prompt Template Path(s) set`;
   }
   if (storedUrls) {
-    promptpp_settings_urlStatus.textContent = `${Array.isArray(storedUrls) ? storedUrls.length : 1} URL Prompt Template Path(s) Set`;
+    promptpp_settings_urlStatus.textContent = `${Array.isArray(storedUrls) ? storedUrls.length : 1} URL(s) Prompt Template Path(s) set`;
   }
   displayUrls(storedUrls);
 }
@@ -54,14 +54,14 @@ promptpp_settings_pickfolder.addEventListener("click", async () => {
         db.createObjectStore("handles");
       }
     });
-    const existing = await db.get("handles", "promptppTemplatePath");
+    const existing = await db.get("handles", "promptppTemplateFolders");
     let roots: any[] = [];
     if (existing) {
       roots = Array.isArray(existing) ? existing : [existing];
     }
     roots.push(dirHandle);
-    await db.put("handles", roots, "promptppTemplatePath");
-    promptpp_settings_handlerStatus.textContent = `${roots.length} folder prompt template path(s) set`;
+    await db.put("handles", roots, "promptppTemplateFolders");
+    promptpp_settings_handlerStatus.textContent = `${roots.length} folder(s) Prompt Template Path(s) set`;
   } catch (e) {
     promptpp_settings_handlerStatus.textContent = "Folder selection not saved";
   }
@@ -90,8 +90,10 @@ promptpp_settings_addUrl.addEventListener("click", async () => {
       urls.push(value);
       await db.put("handles", urls, "promptppTemplateUrls");
       displayUrls(urls);
-      promptpp_settings_urlStatus.textContent = `${urls.length} URL Prompt Template Path(s) Set`;
+      promptpp_settings_urlStatus.textContent = `${urls.length} URL(s) Prompt Template Path(s) set`;
       promptpp_settings_urlInput.value = "";
+    } else {
+      promptpp_settings_urlStatus.textContent = "URL already exists";
     }
   } catch (e) {
     promptpp_settings_urlStatus.textContent = "Failed to save URL";
@@ -105,13 +107,13 @@ promptpp_settings_clearAll.addEventListener("click", async () => {
         db.createObjectStore("handles");
       }
     });
-    await db.delete("handles", "promptppTemplatePath");
+    await db.delete("handles", "promptppTemplateFolders");
     await db.delete("handles", "promptppTemplateUrls");
-    promptpp_settings_handlerStatus.textContent = "No Local Folder Set";
-    promptpp_settings_urlStatus.textContent = "No URL Set";
+    promptpp_settings_handlerStatus.textContent = "No Local Folder set";
+    promptpp_settings_urlStatus.textContent = "No URL set";
     displayUrls(null);
   } catch (e) {
-    promptpp_settings_urlStatus.textContent = "No URL Set";
+    promptpp_settings_urlStatus.textContent = "No URL set";
     promptpp_settings_handlerStatus.textContent = "Failed to clear saved folders/URLs";
   }
 });

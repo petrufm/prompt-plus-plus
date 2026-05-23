@@ -8,6 +8,17 @@
     "scripting",
     "activeTab"
   ],
+  "icons": {
+    "16": "resources/prompt++16.png",
+    "48": "resources/prompt++48.png",
+    "128": "resources/prompt++128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "resources/prompt++16.png",
+      "48": "resources/prompt++48.png"
+    }
+  },
   "background": {
     "service_worker": "dist/background.js"
   },

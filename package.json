@@ -1,11 +1,11 @@
 {
   "private": true,
   "workspaces": [
-    "extensions/chrome",
+    "extensions/prompt++-chrome",
     "prompt++"
   ],
   "scripts": {
-    "build": "npm run build --workspace=prompt++ && npm run build --workspace=extensions/chrome"
+    "build": "npm run build --workspace=prompt++ && npm run build --workspace=extensions/prompt++-chrome"
   },
   "dependencies": {
     "esbuild": "^0.28.0"

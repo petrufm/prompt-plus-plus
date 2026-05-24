@@ -1,4 +1,4 @@
-^professor<institution,discipline>professor of `discipline<> at `institution<>
+^professor<institution,discipline>professor of `discipline at `institution<>
 
 ^question<>question
 

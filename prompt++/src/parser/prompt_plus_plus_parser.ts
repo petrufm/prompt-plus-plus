@@ -17,10 +17,9 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     public static readonly Template_identifier = 4;
     public static readonly Prompt_template_substitution_resolution_operator = 5;
     public static readonly Arg_list_begin = 6;
-    public static readonly Prompt_template_substitution_template_ws = 7;
-    public static readonly Arg_list_end = 8;
-    public static readonly Arg_list_separator = 9;
-    public static readonly Prompt_template_definition_body_end = 10;
+    public static readonly Arg_list_end = 7;
+    public static readonly Arg_list_separator = 8;
+    public static readonly Prompt_template_definition_body_end = 9;
     public static readonly RULE_prompt_plus_plus = 0;
     public static readonly RULE_prompt_template = 1;
     public static readonly RULE_prompt_template_substitution = 2;
@@ -35,8 +34,7 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     public static readonly symbolicNames = [
         null, "Natural_language_text_fragment", "Prompt_template_substitution_operator", 
         "Prompt_template_definition_operator", "Template_identifier", "Prompt_template_substitution_resolution_operator", 
-        "Arg_list_begin", "Prompt_template_substitution_template_ws", "Arg_list_end", 
-        "Arg_list_separator", "Prompt_template_definition_body_end"
+        "Arg_list_begin", "Arg_list_end", "Arg_list_separator", "Prompt_template_definition_body_end"
     ];
     public static readonly ruleNames = [
         "prompt_plus_plus", "prompt_template", "prompt_template_substitution", 
@@ -186,20 +184,28 @@ export class prompt_plus_plus_parser extends antlr.Parser {
             }
             this.state = 39;
             this.match(prompt_plus_plus_parser.Template_identifier);
-            this.state = 40;
-            this.match(prompt_plus_plus_parser.Arg_list_begin);
-            this.state = 42;
+            this.state = 45;
             this.errorHandler.sync(this);
             _la = this.tokenStream.LA(1);
-            if (_la === 1 || _la === 2) {
+            if (_la === 6) {
                 {
-                this.state = 41;
-                this.prompt_template_substitution_arg_list();
+                this.state = 40;
+                this.match(prompt_plus_plus_parser.Arg_list_begin);
+                this.state = 42;
+                this.errorHandler.sync(this);
+                _la = this.tokenStream.LA(1);
+                if (_la === 1 || _la === 2) {
+                    {
+                    this.state = 41;
+                    this.prompt_template_substitution_arg_list();
+                    }
+                }
+
+                this.state = 44;
+                this.match(prompt_plus_plus_parser.Arg_list_end);
                 }
             }
 
-            this.state = 44;
-            this.match(prompt_plus_plus_parser.Arg_list_end);
             }
         }
         catch (re) {
@@ -222,25 +228,25 @@ export class prompt_plus_plus_parser extends antlr.Parser {
             let alternative: number;
             this.enterOuterAlt(localContext, 1);
             {
-            this.state = 46;
+            this.state = 47;
             this.prompt_template_substitution_actual_argument();
-            this.state = 51;
+            this.state = 52;
             this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 6, this.context);
+            alternative = this.interpreter.adaptivePredict(this.tokenStream, 7, this.context);
             while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
                 if (alternative === 1) {
                     {
                     {
-                    this.state = 47;
-                    this.match(prompt_plus_plus_parser.Arg_list_separator);
                     this.state = 48;
+                    this.match(prompt_plus_plus_parser.Arg_list_separator);
+                    this.state = 49;
                     this.prompt_template_substitution_arg_list();
                     }
                     }
                 }
-                this.state = 53;
+                this.state = 54;
                 this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 6, this.context);
+                alternative = this.interpreter.adaptivePredict(this.tokenStream, 7, this.context);
             }
             }
         }
@@ -261,20 +267,20 @@ export class prompt_plus_plus_parser extends antlr.Parser {
         let localContext = new Prompt_template_substitution_actual_argumentContext(this.context, this.state);
         this.enterRule(localContext, 8, prompt_plus_plus_parser.RULE_prompt_template_substitution_actual_argument);
         try {
-            this.state = 56;
+            this.state = 57;
             this.errorHandler.sync(this);
             switch (this.tokenStream.LA(1)) {
             case prompt_plus_plus_parser.Natural_language_text_fragment:
                 this.enterOuterAlt(localContext, 1);
                 {
-                this.state = 54;
+                this.state = 55;
                 this.match(prompt_plus_plus_parser.Natural_language_text_fragment);
                 }
                 break;
             case prompt_plus_plus_parser.Prompt_template_substitution_operator:
                 this.enterOuterAlt(localContext, 2);
                 {
-                this.state = 55;
+                this.state = 56;
                 this.prompt_template_substitution();
                 }
                 break;
@@ -302,27 +308,27 @@ export class prompt_plus_plus_parser extends antlr.Parser {
         try {
             this.enterOuterAlt(localContext, 1);
             {
-            this.state = 58;
-            this.match(prompt_plus_plus_parser.Prompt_template_definition_operator);
             this.state = 59;
-            this.match(prompt_plus_plus_parser.Template_identifier);
+            this.match(prompt_plus_plus_parser.Prompt_template_definition_operator);
             this.state = 60;
+            this.match(prompt_plus_plus_parser.Template_identifier);
+            this.state = 61;
             this.match(prompt_plus_plus_parser.Arg_list_begin);
-            this.state = 62;
+            this.state = 63;
             this.errorHandler.sync(this);
             _la = this.tokenStream.LA(1);
             if (_la === 4) {
                 {
-                this.state = 61;
+                this.state = 62;
                 this.prompt_template_definition_arg_list();
                 }
             }
 
-            this.state = 64;
-            this.match(prompt_plus_plus_parser.Arg_list_end);
             this.state = 65;
-            this.prompt_template();
+            this.match(prompt_plus_plus_parser.Arg_list_end);
             this.state = 66;
+            this.prompt_template();
+            this.state = 67;
             this.match(prompt_plus_plus_parser.Prompt_template_definition_body_end);
             }
         }
@@ -346,25 +352,25 @@ export class prompt_plus_plus_parser extends antlr.Parser {
             let alternative: number;
             this.enterOuterAlt(localContext, 1);
             {
-            this.state = 68;
+            this.state = 69;
             this.match(prompt_plus_plus_parser.Template_identifier);
-            this.state = 73;
+            this.state = 74;
             this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 9, this.context);
+            alternative = this.interpreter.adaptivePredict(this.tokenStream, 10, this.context);
             while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
                 if (alternative === 1) {
                     {
                     {
-                    this.state = 69;
-                    this.match(prompt_plus_plus_parser.Arg_list_separator);
                     this.state = 70;
+                    this.match(prompt_plus_plus_parser.Arg_list_separator);
+                    this.state = 71;
                     this.prompt_template_definition_arg_list();
                     }
                     }
                 }
-                this.state = 75;
+                this.state = 76;
                 this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 9, this.context);
+                alternative = this.interpreter.adaptivePredict(this.tokenStream, 10, this.context);
             }
             }
         }
@@ -383,30 +389,31 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     }
 
     public static readonly _serializedATN: number[] = [
-        4,1,10,77,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
-        6,1,0,5,0,16,8,0,10,0,12,0,19,9,0,1,0,3,0,22,8,0,1,0,1,0,1,1,1,1,
-        4,1,28,8,1,11,1,12,1,29,1,2,1,2,1,2,5,2,35,8,2,10,2,12,2,38,9,2,
-        1,2,1,2,1,2,3,2,43,8,2,1,2,1,2,1,3,1,3,1,3,5,3,50,8,3,10,3,12,3,
-        53,9,3,1,4,1,4,3,4,57,8,4,1,5,1,5,1,5,1,5,3,5,63,8,5,1,5,1,5,1,5,
-        1,5,1,6,1,6,1,6,5,6,72,8,6,10,6,12,6,75,9,6,1,6,0,0,7,0,2,4,6,8,
-        10,12,0,0,79,0,17,1,0,0,0,2,27,1,0,0,0,4,31,1,0,0,0,6,46,1,0,0,0,
-        8,56,1,0,0,0,10,58,1,0,0,0,12,68,1,0,0,0,14,16,3,10,5,0,15,14,1,
-        0,0,0,16,19,1,0,0,0,17,15,1,0,0,0,17,18,1,0,0,0,18,21,1,0,0,0,19,
-        17,1,0,0,0,20,22,3,2,1,0,21,20,1,0,0,0,21,22,1,0,0,0,22,23,1,0,0,
-        0,23,24,5,0,0,1,24,1,1,0,0,0,25,28,5,1,0,0,26,28,3,4,2,0,27,25,1,
-        0,0,0,27,26,1,0,0,0,28,29,1,0,0,0,29,27,1,0,0,0,29,30,1,0,0,0,30,
-        3,1,0,0,0,31,36,5,2,0,0,32,33,5,4,0,0,33,35,5,5,0,0,34,32,1,0,0,
-        0,35,38,1,0,0,0,36,34,1,0,0,0,36,37,1,0,0,0,37,39,1,0,0,0,38,36,
-        1,0,0,0,39,40,5,4,0,0,40,42,5,6,0,0,41,43,3,6,3,0,42,41,1,0,0,0,
-        42,43,1,0,0,0,43,44,1,0,0,0,44,45,5,8,0,0,45,5,1,0,0,0,46,51,3,8,
-        4,0,47,48,5,9,0,0,48,50,3,6,3,0,49,47,1,0,0,0,50,53,1,0,0,0,51,49,
-        1,0,0,0,51,52,1,0,0,0,52,7,1,0,0,0,53,51,1,0,0,0,54,57,5,1,0,0,55,
-        57,3,4,2,0,56,54,1,0,0,0,56,55,1,0,0,0,57,9,1,0,0,0,58,59,5,3,0,
-        0,59,60,5,4,0,0,60,62,5,6,0,0,61,63,3,12,6,0,62,61,1,0,0,0,62,63,
-        1,0,0,0,63,64,1,0,0,0,64,65,5,8,0,0,65,66,3,2,1,0,66,67,5,10,0,0,
-        67,11,1,0,0,0,68,73,5,4,0,0,69,70,5,9,0,0,70,72,3,12,6,0,71,69,1,
-        0,0,0,72,75,1,0,0,0,73,71,1,0,0,0,73,74,1,0,0,0,74,13,1,0,0,0,75,
-        73,1,0,0,0,10,17,21,27,29,36,42,51,56,62,73
+        4,1,9,78,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,
+        1,0,5,0,16,8,0,10,0,12,0,19,9,0,1,0,3,0,22,8,0,1,0,1,0,1,1,1,1,4,
+        1,28,8,1,11,1,12,1,29,1,2,1,2,1,2,5,2,35,8,2,10,2,12,2,38,9,2,1,
+        2,1,2,1,2,3,2,43,8,2,1,2,3,2,46,8,2,1,3,1,3,1,3,5,3,51,8,3,10,3,
+        12,3,54,9,3,1,4,1,4,3,4,58,8,4,1,5,1,5,1,5,1,5,3,5,64,8,5,1,5,1,
+        5,1,5,1,5,1,6,1,6,1,6,5,6,73,8,6,10,6,12,6,76,9,6,1,6,0,0,7,0,2,
+        4,6,8,10,12,0,0,81,0,17,1,0,0,0,2,27,1,0,0,0,4,31,1,0,0,0,6,47,1,
+        0,0,0,8,57,1,0,0,0,10,59,1,0,0,0,12,69,1,0,0,0,14,16,3,10,5,0,15,
+        14,1,0,0,0,16,19,1,0,0,0,17,15,1,0,0,0,17,18,1,0,0,0,18,21,1,0,0,
+        0,19,17,1,0,0,0,20,22,3,2,1,0,21,20,1,0,0,0,21,22,1,0,0,0,22,23,
+        1,0,0,0,23,24,5,0,0,1,24,1,1,0,0,0,25,28,5,1,0,0,26,28,3,4,2,0,27,
+        25,1,0,0,0,27,26,1,0,0,0,28,29,1,0,0,0,29,27,1,0,0,0,29,30,1,0,0,
+        0,30,3,1,0,0,0,31,36,5,2,0,0,32,33,5,4,0,0,33,35,5,5,0,0,34,32,1,
+        0,0,0,35,38,1,0,0,0,36,34,1,0,0,0,36,37,1,0,0,0,37,39,1,0,0,0,38,
+        36,1,0,0,0,39,45,5,4,0,0,40,42,5,6,0,0,41,43,3,6,3,0,42,41,1,0,0,
+        0,42,43,1,0,0,0,43,44,1,0,0,0,44,46,5,7,0,0,45,40,1,0,0,0,45,46,
+        1,0,0,0,46,5,1,0,0,0,47,52,3,8,4,0,48,49,5,8,0,0,49,51,3,6,3,0,50,
+        48,1,0,0,0,51,54,1,0,0,0,52,50,1,0,0,0,52,53,1,0,0,0,53,7,1,0,0,
+        0,54,52,1,0,0,0,55,58,5,1,0,0,56,58,3,4,2,0,57,55,1,0,0,0,57,56,
+        1,0,0,0,58,9,1,0,0,0,59,60,5,3,0,0,60,61,5,4,0,0,61,63,5,6,0,0,62,
+        64,3,12,6,0,63,62,1,0,0,0,63,64,1,0,0,0,64,65,1,0,0,0,65,66,5,7,
+        0,0,66,67,3,2,1,0,67,68,5,9,0,0,68,11,1,0,0,0,69,74,5,4,0,0,70,71,
+        5,8,0,0,71,73,3,12,6,0,72,70,1,0,0,0,73,76,1,0,0,0,74,72,1,0,0,0,
+        74,75,1,0,0,0,75,13,1,0,0,0,76,74,1,0,0,0,11,17,21,27,29,36,42,45,
+        52,57,63,74
     ];
 
     private static __ATN: antlr.ATN;
@@ -531,12 +538,6 @@ export class Prompt_template_substitutionContext extends antlr.ParserRuleContext
     		return this.getToken(prompt_plus_plus_parser.Template_identifier, i);
     	}
     }
-    public Arg_list_begin(): antlr.TerminalNode {
-        return this.getToken(prompt_plus_plus_parser.Arg_list_begin, 0)!;
-    }
-    public Arg_list_end(): antlr.TerminalNode {
-        return this.getToken(prompt_plus_plus_parser.Arg_list_end, 0)!;
-    }
     public Prompt_template_substitution_resolution_operator(): antlr.TerminalNode[];
     public Prompt_template_substitution_resolution_operator(i: number): antlr.TerminalNode | null;
     public Prompt_template_substitution_resolution_operator(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
@@ -545,6 +546,12 @@ export class Prompt_template_substitutionContext extends antlr.ParserRuleContext
     	} else {
     		return this.getToken(prompt_plus_plus_parser.Prompt_template_substitution_resolution_operator, i);
     	}
+    }
+    public Arg_list_begin(): antlr.TerminalNode | null {
+        return this.getToken(prompt_plus_plus_parser.Arg_list_begin, 0);
+    }
+    public Arg_list_end(): antlr.TerminalNode | null {
+        return this.getToken(prompt_plus_plus_parser.Arg_list_end, 0);
     }
     public prompt_template_substitution_arg_list(): Prompt_template_substitution_arg_listContext | null {
         return this.getRuleContext(0, Prompt_template_substitution_arg_listContext);

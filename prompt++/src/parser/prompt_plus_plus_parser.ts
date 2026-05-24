@@ -30,7 +30,6 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     public static readonly RULE_prompt_template_definition_arg_list = 6;
 
     public static readonly literalNames = [
-        null, null, null, null, null, "':'"
     ];
 
     public static readonly symbolicNames = [

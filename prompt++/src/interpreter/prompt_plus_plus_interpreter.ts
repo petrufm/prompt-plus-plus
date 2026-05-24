@@ -48,7 +48,11 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
     }
 
     this.visitTerminal = async (node: TerminalNode): Promise<string[]> => {
-      return [node.getText()];
+      let result = node.getText();
+      if (node.getPayload()!.type === prompt_plus_plus_lexer.Natural_language_text_fragment) {
+        result =result.replaceAll("\\`", "`").replaceAll("\\^","^").replaceAll("\\\\","\\").replaceAll("\\{","{").replaceAll("\\}","}");
+      }
+      return [result];
     }
     
     this.visitPrompt_template_substitution = async (ctx: Prompt_template_substitutionContext): Promise<string[]> => {

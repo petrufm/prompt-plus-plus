@@ -9,11 +9,15 @@
   },
   "devDependencies": {
     "tsx": "^4.x.x",
+    "jest": "^29.x.x",
+    "ts-node": "^10.x.x",
+    "ts-jest": "^29.x.x",
     "@types/node": "^25.x.x",
     "typescript": "^6.x.x"
   },
   "scripts": {
     "antlr": "antlr-ng -Dlanguage=TypeScript --generate-visitor -o ./src/parser ./src/grammar/*.g4",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest"
   }
 }

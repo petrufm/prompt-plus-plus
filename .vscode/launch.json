@@ -6,9 +6,9 @@
       "name": "Debug",
       "runtimeArgs": ["--import", "tsx"],
       "program": "${workspaceFolder}/prompt++/src/prompt++.ts",
-      "args": ["-ptp", ".", "${workspaceFolder}/prompt++/tests/testData1/input.prompt++"],
+      "args": ["-ptp", ".", "${workspaceFolder}/prompt++/tests/testData/t0.prompt++"],
       "console": "integratedTerminal",
-      "cwd": "${workspaceFolder}/prompt++/tests/testData1",
+      "cwd": "${workspaceFolder}/prompt++/tests/testData",
       "preLaunchTask": "npm: build"
     }
   ]

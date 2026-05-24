@@ -1,0 +1,6 @@
+` and ^ are escaped.
+`isnttemplate<>.
+^isnttemplate<>.
+\something.
+\`isnttemplate<>.
+\ some text.

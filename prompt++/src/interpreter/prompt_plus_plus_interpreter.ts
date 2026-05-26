@@ -48,11 +48,42 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
     }
 
     this.visitTerminal = async (node: TerminalNode): Promise<string[]> => {
-      let result = node.getText();
+      let tmp = node.getText();
       if (node.getPayload()!.type === prompt_plus_plus_lexer.Natural_language_text_fragment) {
-        result =result.replaceAll("\\`", "`").replaceAll("\\^","^").replaceAll("\\\\","\\").replaceAll("\\{","{").replaceAll("\\}","}");
+        //Remove escape characters
+        let nextBrother = null;
+        if (node.parent) {
+          for (let i = 0; i < node.parent.getChildCount() ; i++) {
+            if (node === node.parent?.getChild(i)) {
+              nextBrother = i + 1 < node.parent.getChildCount() ? node.parent.getChild(i + 1) : null;
+            }
+          }
+        }
+        let result = "";
+        //let state = 0; //nextBrother instanceof Prompt_template_substitutionContext ? 1 : 0;
+        for (let i = tmp.length - 1; i >= 0; i--) {
+            let currentChar = tmp.charAt(i);
+            if ((i === tmp.length - 1 && (nextBrother instanceof Prompt_template_substitutionContext || nextBrother instanceof Named_prompt_template_definitionContext))
+                || currentChar === '`' 
+                || currentChar === '^') {
+              result = currentChar + result;
+              i--;
+              let includeNext = false;
+              while (i >= 0 && tmp.charAt(i) === '\\') {
+                if (includeNext) {
+                  result = '\\' + result;
+                }
+                includeNext = !includeNext;
+                i--;
+              }
+              i++;
+            } else {
+              result = currentChar + result;
+            }
+        }
+        return [result];
       }
-      return [result];
+      return [tmp];
     }
     
     this.visitPrompt_template_substitution = async (ctx: Prompt_template_substitutionContext): Promise<string[]> => {

@@ -17,7 +17,7 @@ fragment Fragment_resolution_operator:
     ':' ;
 
 Natural_language_text_fragment:
-    ('\\''\\' | '\\''`' | '\\''^' | '\\'~[`^\\] | ~[`^\\])+ ;
+    ('\\''`' | '\\''^' | '\\''\\' | '\\'~[`^\\] | ~[`^\\])+ ;
 
 Prompt_template_substitution_operator:
     Fragment_substitution_operator -> pushMode(PROMPT_TEMPLATE_SUBSTITUTION) ;

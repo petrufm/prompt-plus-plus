@@ -1,7 +1,8 @@
-import { TerminalNode, CharStream, CommonTokenStream } from "antlr4ng";
+import { TerminalNode, CharStream, CommonTokenStream, ParseTree } from "antlr4ng";
 import { Prompt_plus_plusContext, Prompt_templateContext, Prompt_template_substitutionContext, Prompt_template_substitution_arg_listContext, Named_prompt_template_definitionContext, Prompt_template_definition_arg_listContext, prompt_plus_plus_parser, Prompt_template_substitution_actual_argumentContext } from "../parser/prompt_plus_plus_parser";
 import { prompt_plus_plus_parserVisitor } from "../parser/prompt_plus_plus_parserVisitor";
 import { prompt_plus_plus_lexer } from '../parser/prompt_plus_plus_lexer';
+import { clear } from "console";
 
 interface NamedPromptTemplate {
   name: string;
@@ -50,22 +51,45 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
     this.visitTerminal = async (node: TerminalNode): Promise<string[]> => {
       let tmp = node.getText();
       if (node.getPayload()!.type === prompt_plus_plus_lexer.Natural_language_text_fragment) {
-        //Remove escape characters
+        //Interprete escaped characters
         let nextBrother = null;
-        if (node.parent) {
-          for (let i = 0; i < node.parent.getChildCount() ; i++) {
-            if (node === node.parent?.getChild(i)) {
-              nextBrother = i + 1 < node.parent.getChildCount() ? node.parent.getChild(i + 1) : null;
+        let searchedNode : ParseTree | null = node;
+        all:while (searchedNode.parent !== null) {
+          for (let i = 0; i < searchedNode.parent.getChildCount() ; i++) {
+            if (searchedNode === searchedNode.parent.getChild(i)) {
+              if (i + 1 < searchedNode.parent.getChildCount()) {
+                nextBrother = searchedNode.parent.getChild(i + 1);
+                break all;
+              }
             }
           }
+          searchedNode = searchedNode!.parent;
         }
         let result = "";
-        //let state = 0; //nextBrother instanceof Prompt_template_substitutionContext ? 1 : 0;
         for (let i = tmp.length - 1; i >= 0; i--) {
             let currentChar = tmp.charAt(i);
             if ((i === tmp.length - 1 && (nextBrother instanceof Prompt_template_substitutionContext || nextBrother instanceof Named_prompt_template_definitionContext))
                 || currentChar === '`' 
                 || currentChar === '^') {
+              //Case of escaped ` and ^ (always)
+              result = currentChar + result;
+              i--;
+              let includeNext = false;
+              while (i >= 0 && tmp.charAt(i) === '\\') {
+                if (includeNext) {
+                  result = '\\' + result;
+                }
+                includeNext = !includeNext;
+                i--;
+              }
+              i++;
+            } else if ((this.interpretationStack.length > 0 && i === tmp.length - 1 && (nextBrother instanceof TerminalNode && nextBrother.getPayload()!.type === prompt_plus_plus_lexer.Prompt_template_definition_body_end))
+              || (this.interpretationStack.length > 0 && i > 0 && tmp.charAt(i - 1) === '\n' && currentChar === '\n')) {
+              //Case of escaped \n\n (in a named template body)
+              if (this.interpretationStack.length > 0 && i > 0 && tmp.charAt(i - 1) === '\n' && currentChar === '\n') {
+                result = currentChar + result;
+                i--;
+              }
               result = currentChar + result;
               i--;
               let includeNext = false;

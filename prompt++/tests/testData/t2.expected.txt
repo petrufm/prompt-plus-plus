@@ -1,0 +1,20 @@
+some phrase
+on two lines!
+something
+
+continue.
+something else
+\
+continue else.
+escaped backslash before two new lines \.
+using params:
+OK?
+this case\
+should be ok
+multiple end of lines
+
+
+
+should be ok
+template ending with end of 
+line

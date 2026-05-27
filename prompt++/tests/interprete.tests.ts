@@ -8,7 +8,8 @@ import { prompt_plus_plus_lexer, prompt_plus_plus_parser, PromptPlusPlusInterpre
 
 describe.each([
   { input: 't0.prompt++', expected: 't0.expected.txt' },
-  { input: 't1.prompt++', expected: 't1.expected.txt' }
+  { input: 't1.prompt++', expected: 't1.expected.txt' },
+  { input: 't2.prompt++', expected: 't2.expected.txt' }
 ])('interpretation', ({ input, expected }) => {
   it(`should interpret ${input} as ${expected}`, async () => {
         const content = fs.readFileSync("tests/testData/" + input, "utf-8");
@@ -17,6 +18,7 @@ describe.each([
         const tokens = new CommonTokenStream(lexer);
         const parser = new prompt_plus_plus_parser(tokens);
         const tree = parser.prompt_plus_plus();
+        expect(parser.numberOfSyntaxErrors).toBe(0);
         const interpreter = new PromptPlusPlusInterpreter(async (module: string): Promise<string | null> => {
           const moduleFilePath = `${module}.prompt++`;
           const roots = [process.cwd() + "/tests/testData"];

@@ -1,0 +1,37 @@
+^template0<>some phrase
+on two lines
+
+^template1<>something\
+
+continue
+
+^template2<>something else
+\
+continue else
+
+^template3<>escaped backslash before two new lines \\
+
+^template4<param>using params:
+`param<>
+
+^template5<>this case\
+should be ok
+
+^template6<>multiple end of lines\
+
+\
+
+should be ok
+
+^template7<>template ending with end of 
+line
+
+
+`template0<>!
+`template1<>.
+`template2<>.
+`template3<>.
+`template4<OK>?
+`template5<>
+`template6<>
+`template7

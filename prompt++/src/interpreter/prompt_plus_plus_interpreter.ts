@@ -178,7 +178,7 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
       let result:string[] = [];
       result.push((await ctx.prompt_template_substitution_actual_argument().accept(this) as string[])[0]);
       for (const child of ctx.prompt_template_substitution_arg_list()) {
-        result.push((await child.accept(this) as string[])[0]);
+        result.push(...await child.accept(this) as string[]);
       }
       return result;
     }
@@ -211,7 +211,7 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
       let result : string[] = [];
       result.push((await ctx.Template_identifier().accept(this) as string[])[0]);
       for (const child of ctx.prompt_template_definition_arg_list()) {
-        result.push((await child.accept(this) as string[])[0]);
+        result.push(...await child.accept(this) as string[]);
       }
       return result;
     }

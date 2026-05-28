@@ -9,7 +9,8 @@ import { prompt_plus_plus_lexer, prompt_plus_plus_parser, PromptPlusPlusInterpre
 describe.each([
   { input: 't0.prompt++', expected: 't0.expected.txt' },
   { input: 't1.prompt++', expected: 't1.expected.txt' },
-  { input: 't2.prompt++', expected: 't2.expected.txt' }
+  { input: 't2.prompt++', expected: 't2.expected.txt' },
+  { input: 't3.prompt++', expected: 't3.expected.txt' }
 ])('interpretation', ({ input, expected }) => {
   it(`should interpret ${input} as ${expected}`, async () => {
         const content = fs.readFileSync("tests/testData/" + input, "utf-8");

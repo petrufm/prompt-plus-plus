@@ -59,53 +59,101 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
             if (searchedNode === searchedNode.parent.getChild(i)) {
               if (i + 1 < searchedNode.parent.getChildCount()) {
                 nextBrother = searchedNode.parent.getChild(i + 1);
+                while (nextBrother!.getChildCount() > 0) {
+                  nextBrother = nextBrother!.getChild(0);
+                }
                 break all;
               }
             }
           }
           searchedNode = searchedNode!.parent;
         }
-        let result = "";
+        let lessGreaterCommaAreEscaped = this.symbolsLessThanHigherThanCommaMustBeescaped(node);
+        let result : string[] = [];
         for (let i = tmp.length - 1; i >= 0; i--) {
             let currentChar = tmp.charAt(i);
-            if ((i === tmp.length - 1 && (nextBrother instanceof Prompt_template_substitutionContext || nextBrother instanceof Named_prompt_template_definitionContext))
-                || currentChar === '`' 
-                || currentChar === '^') {
-              //Case of escaped ` and ^ (always)
-              result = currentChar + result;
-              i--;
-              let includeNext = false;
-              while (i >= 0 && tmp.charAt(i) === '\\') {
-                if (includeNext) {
-                  result = '\\' + result;
+
+            //Case of escaped ` and ^ (always) 
+            {
+              let escapePreviousBackSlashes = false;
+              if(currentChar === '\\' && i === tmp.length - 1 && (nextBrother?.getText() === '`' || nextBrother?.getText() === '^')) {
+                escapePreviousBackSlashes = true;
+              } else if (currentChar === '`' || currentChar === '^') {
+                result.push(currentChar);
+                i--;
+                //This should always happen
+                escapePreviousBackSlashes = (i >= 0 && tmp.charAt(i) === '\\');
+              }
+              if (escapePreviousBackSlashes) {
+                let includeNext = false;
+                while (escapePreviousBackSlashes && i >= 0 && tmp.charAt(i) === '\\') {
+                  if (includeNext) {
+                    result.push('\\');
+                  }
+                  includeNext = !includeNext;
+                  i--;
                 }
-                includeNext = !includeNext;
-                i--;
+                i++;
+                continue;
               }
-              i++;
-            } else if ((this.interpretationStack.length > 0 && i === tmp.length - 1 && (nextBrother instanceof TerminalNode && nextBrother.getPayload()!.type === prompt_plus_plus_lexer.Prompt_template_definition_body_end))
-              || (this.interpretationStack.length > 0 && i > 0 && tmp.charAt(i - 1) === '\n' && currentChar === '\n')) {
-              //Case of escaped \n\n (in a named template body)
-              if (this.interpretationStack.length > 0 && i > 0 && tmp.charAt(i - 1) === '\n' && currentChar === '\n') {
-                result = currentChar + result;
-                i--;
-              }
-              result = currentChar + result;
-              i--;
-              let includeNext = false;
-              while (i >= 0 && tmp.charAt(i) === '\\') {
-                if (includeNext) {
-                  result = '\\' + result;
-                }
-                includeNext = !includeNext;
-                i--;
-              }
-              i++;
-            } else {
-              result = currentChar + result;
             }
+
+            //Case of escaped \n\n (in a named template body)
+            if (this.interpretationStack.length > 0) {
+              let escapePreviousBackSlashes = false;
+              if (currentChar === '\\' && i === tmp.length - 1 && nextBrother?.getText() === '\n\n') {
+                escapePreviousBackSlashes = true;
+              } else if (currentChar === '\n' && i > 0 && tmp.charAt(i - 1) === '\n') {
+                result.push(currentChar);
+                result.push(currentChar);
+                i--;
+                i--;
+                //This should always happen
+                escapePreviousBackSlashes = (i >= 0 && tmp.charAt(i) === '\\');
+              }
+              if (escapePreviousBackSlashes) {
+                let includeNext = false;
+                while (escapePreviousBackSlashes && i >= 0 && tmp.charAt(i) === '\\') {
+                  if (includeNext) {
+                    result.push('\\');
+                  }
+                  includeNext = !includeNext;
+                  i--;
+                }
+                i++;
+                continue;
+              }
+            }
+
+            //Case of < , > in arguments
+            if (lessGreaterCommaAreEscaped) {
+              let escapePreviousBackSlashes = false;
+              if(currentChar === '\\' && i === tmp.length - 1 && (nextBrother?.getText() === '<' || nextBrother?.getText() === '>' || nextBrother?.getText() === ',')) {
+                escapePreviousBackSlashes = true;
+              }
+              if (currentChar === '<' || currentChar === '>' || currentChar === ',') {
+                result.push(currentChar);
+                i--;
+                //This should always happen
+                escapePreviousBackSlashes ||= (i >= 0 && tmp.charAt(i) === '\\');
+              }
+              if (escapePreviousBackSlashes) {
+                let includeNext = false;
+                while (escapePreviousBackSlashes && i >= 0 && tmp.charAt(i) === '\\') {
+                  if (includeNext) {
+                    result.push('\\');
+                  }
+                  includeNext = !includeNext;
+                  i--;
+                }
+                i++;
+                continue;
+              }
+            }
+
+            result.push(currentChar);
         }
-        return [result];
+        return [result.reverse().join("")];
       }
       return [tmp];
     }
@@ -223,5 +271,17 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
       }
       return result;
     }
+  }
+
+  private symbolsLessThanHigherThanCommaMustBeescaped(node : ParseTree) : boolean {
+    let currentNode : ParseTree | null;
+    currentNode = node;
+    while (currentNode !== null) {
+      if (currentNode instanceof Prompt_template_substitution_actual_argumentContext) {
+        return true;
+      }
+      currentNode = currentNode.parent;
+    }
+    return false;
   }
 }

@@ -42,7 +42,7 @@ Not_Template_identifier:
 mode PROMPT_TEMPLATE_SUBSTITUTION_ARG_LIST;
 
 Prompt_template_substitution_arg_list_natural_language_text_fragment: 
-    (~[`^<>,:])+ -> type(Natural_language_text_fragment);
+    ('\\''`' | '\\''^' | '\\''<' | '\\''>' | '\\'',' | '\\''\\' | '\\'~[`^<>,\\] | ~[`^<>,\\])+ -> type(Natural_language_text_fragment) ;
 
 Arg_list_end:
     Fragment_arg_list_end  -> popMode, popMode;

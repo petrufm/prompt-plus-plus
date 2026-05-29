@@ -3,6 +3,7 @@ import { Prompt_plus_plusContext, Prompt_templateContext, Prompt_template_substi
 import { prompt_plus_plus_parserVisitor } from "../parser/prompt_plus_plus_parserVisitor";
 import { prompt_plus_plus_lexer } from '../parser/prompt_plus_plus_lexer';
 import { clear } from "console";
+import { CountingErrorHandler } from "../parser/prompt_error_handler";
 
 interface NamedPromptTemplate {
   name: string;
@@ -15,7 +16,7 @@ interface ProptTemplateInterpretationFrame {
   actualParameters: string[];
 }
 
-export class SemanticalError extends Error {}
+export class InterpretationError extends Error {}
 
 export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Promise<string[]>> {
   
@@ -180,7 +181,7 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
         //Substitute with an actual parameter
         //Semantical check: Ensure the number of actual arguments is 0
         if (argsActualValues.length !== 0) {
-          throw new SemanticalError(`Template ${templatePath} expects 0 arguments, got ${argsActualValues.length}`);
+          throw new InterpretationError(`Template ${templatePath} expects 0 arguments, got ${argsActualValues.length}`);
         }
         let top = this.interpretationStack.at(-1);
         return [top!.actualParameters[top!.formalParameters.indexOf(templatePath)]];
@@ -193,27 +194,29 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
             if (input !== null) {
               const charStream = CharStream.fromString(input);
               const lexer = new prompt_plus_plus_lexer(charStream);
+              const errorCounter = new CountingErrorHandler();
+              lexer.addErrorListener(errorCounter);
               const tokens = new CommonTokenStream(lexer);
               const parser = new prompt_plus_plus_parser(tokens);
               const tree = parser.prompt_plus_plus();
-              if (parser.numberOfSyntaxErrors == 0) {
+              if (parser.numberOfSyntaxErrors == 0 && !errorCounter.hasErrors()) {
                 this.moduleStack.push(modulePath);
                 await tree.accept(this);
                 this.moduleStack.pop();
               } else {
-                throw new SemanticalError(`Syntax errors in prompt template module: ${modulePath}`);
+                throw new InterpretationError(`Syntax errors in prompt template module: ${modulePath}`);
               }
               template = this.loaded_named_prompt_template.get(templatePath);
             }
           }
         }
         if (!template) {
-          throw new SemanticalError(`Undefined template: ${templatePath}`);
+          throw new InterpretationError(`Undefined template: ${templatePath}`);
         }
 
         //Semantical check: Ensure the number of actual arguments matches the number of formal parameters
         if (argsActualValues.length !== template.formalParameters.length) {
-          throw new SemanticalError(`Template ${templatePath} expects ${template.formalParameters.length} arguments, got ${argsActualValues.length}`);
+          throw new InterpretationError(`Template ${templatePath} expects ${template.formalParameters.length} arguments, got ${argsActualValues.length}`);
         } 
         this.interpretationStack.push({ formalParameters: template.formalParameters, actualParameters: argsActualValues });
         let result = (await template.body.accept(this) as string[])[0];  
@@ -236,12 +239,12 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
       
       /*Semantical check: Ensure formal argument names are unique*/
       if (new Set(formalParams).size !== formalParams.length) {
-        throw new SemanticalError(`Duplicate parameter names in prompt template: ${ctx.Template_identifier().getText()} parameters: ${formalParams.join(", ")}`);
+        throw new InterpretationError(`Duplicate parameter names in prompt template: ${ctx.Template_identifier().getText()} parameters: ${formalParams.join(", ")}`);
       }
       
       /*Semantical check: Ensure template name is unique*/
       if (this.loaded_named_prompt_template.has(ctx.Template_identifier().getText())) {
-        throw new SemanticalError(`Duplicate template name: ${ctx.Template_identifier().getText()}`);
+        throw new InterpretationError(`Duplicate template name: ${ctx.Template_identifier().getText()}`);
       }
 
       const templateFullPath = (this.moduleStack.length > 0 ? this.moduleStack.at(-1) + "/" : "") + ctx.Template_identifier().getText();

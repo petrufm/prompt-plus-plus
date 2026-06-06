@@ -1,4 +1,5 @@
-^professor<institution,discipline>professor of `discipline at `institution<>
+^professor<institution,discipline,details>I am a professor of `discipline<> at `institution.
+My students are `details
 
-^question<>question
+^bloomQuestion<level>questions at the level `level according to the Bloom's taxonomy
 

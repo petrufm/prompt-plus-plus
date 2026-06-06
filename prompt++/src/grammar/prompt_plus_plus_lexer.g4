@@ -36,8 +36,8 @@ Prompt_template_substitution_resolution_operator:
 Arg_list_begin:
     Fragment_arg_list_begin -> pushMode(PROMPT_TEMPLATE_SUBSTITUTION_ARG_LIST) ;
 
-Not_Template_identifier:
-    ~[a-zA-Z0-9:<] -> more, popMode ;
+Anything_else:
+    {true}? -> more, popMode ;
 
 mode PROMPT_TEMPLATE_SUBSTITUTION_ARG_LIST;
 

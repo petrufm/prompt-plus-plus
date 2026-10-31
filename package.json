@@ -5,9 +5,13 @@
     "prompt++"
   ],
   "scripts": {
-    "build": "npm run build --workspace=prompt++ && npm run build --workspace=extensions/prompt++-chrome"
+    "build": "npm run build --workspace=prompt++ && npm run build --workspace=extensions/prompt++-chrome",
+    "test": "npm run test --workspace=prompt++"
   },
   "dependencies": {
     "esbuild": "^0.28.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

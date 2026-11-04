@@ -18,7 +18,7 @@ prompt_template_substitution_arg_list:
     prompt_template_substitution_actual_argument (Arg_list_separator prompt_template_substitution_arg_list)* ;
 
 prompt_template_substitution_actual_argument:
-    Natural_language_text_fragment | prompt_template_substitution;
+    prompt_template ;
 
 named_prompt_template_definition:
     Prompt_template_definition_operator

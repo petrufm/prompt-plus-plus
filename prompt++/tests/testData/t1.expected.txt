@@ -5,7 +5,7 @@
 \\\ some1
 \\\\ other2
 
-\something.
-\`template<>.
+\something. \`template<>.
 \\something.
 \\`template<>.
+something.end

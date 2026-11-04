@@ -1,2 +1,1 @@
-Result: cucu xy z
-Result: cucu special1<special2, special3>
+Result: cucu xy z Result: cucu special1<special2, special3>

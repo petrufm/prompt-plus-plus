@@ -1,7 +1,3 @@
-I am a professor of Object-Oriented Programming at Politehnica University of Timisoara.
-My students are  
-second year students following the Information Technology specialisation. I would like to generate 
-a quiz to use for a live exercise during my lecture. The quiz must have 6 questions each of which with 3 
-alternatives. All of them must be about access modifiers, instance variables, 
-and instance methods. 33% must be questions at the level remembering according to the Bloom's taxonomy, 
-33% must be questions at the level understanding according to the Bloom's taxonomy and 33% must be questions at the level analysis according to the Bloom's taxonomy.
+I am a professor of Object-Oriented Programming
+ at Politehnica University of Timisoara. My students are second year students following the Information Technology specialisation.
+I would like to generate a quiz to use for a live exercise during my lecture. The quiz must have 6 questions each of which with 3 alternatives. All of them must be about access modifiers, instance variables, and instance methods. 33% must be questions at the level remembering according to the Bloom's taxonomy, 33% must be questions at the level understanding according to the Bloom's taxonomy and 33% must be questions at the level analysis according to the Bloom's taxonomy.

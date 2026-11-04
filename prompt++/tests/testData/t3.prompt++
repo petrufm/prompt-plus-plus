@@ -1,4 +1,4 @@
 ^template<a,b,c>cucu `a`b `c
 
-Result: `template<x,y,z>
+Result: `template<x,y,z> \
 Result: `template<special1\<,special2\,,special3\>>

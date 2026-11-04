@@ -1,0 +1,20 @@
+^x<i>`i
+
+^bloomQuestion<level>questions a the level `level according to the Bloom's taxonomy
+
+ok
+
+I am a professor of Object-Oriented Programming at Politehnica University of Timisoara. My students are second year students following the Information Technology specialisation. I would like to generate  a quiz to use for a live exercise during my lecture. The quiz must have 6 questions each of which with 3 
+alternatives. All of them must be about access modifiers, instance variables, 
+and instance methods. 33% must be questions at the level remembering according to the Bloom's taxonomy, 
+33% must be questions at the level understanding according to the Bloom's taxonomy and 33% must be questions at the level analysis according to the Bloom's taxonomy.
+
+
+^quiz<number,alternatives,topics>The quiz must have `number questions each of which with `alternatives 
+alternatives. All of them must be about `topics. 33% must be `university:teaching:bloomQuestion<remembering>, 
+33% must be `university:teaching:bloomQuestion<understanding> and 33% must be `university:teaching:bloomQuestion<analysis>
+
+`university:teaching:professor<Politehnica University of Timisoara,Object-Oriented Programming,
+second year students following the Information Technology specialisation>. I would like to generate 
+a quiz to use for a live exercise during my lecture. `quiz<6,3,access modifiers\, instance variables\, 
+and instance methods>.

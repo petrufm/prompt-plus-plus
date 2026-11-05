@@ -1,0 +1,4 @@
+^professorOf<discipline,institution,details>I am a professor of `discipline<> at `institution. Some details about my students: `details.
+
+^generateQuiz<noOfQuestions,noOfAlternatives,topics>I would like a quiz containing a number of `noOfQuestions questions each of which having `noOfAlternatives alternatives. All of them must be about `topics.
+

@@ -1,0 +1,4 @@
+^sefQuiz<numberOfQuestions,topics>`university:teaching:professorOf<Software Engineering Fundaments,Politehnica University of Timisoara, second year students> `university:teaching:generateQuiz<`numberOfQuestions,5,`topics>
+
+^pooQuiz<numberOfQuestions,topics>`university:teaching:professorOf<Object-Oriented Programming,Politehnica University of Timisoara, second year students \, the mandatory language is Java> `university:teaching:generateQuiz<`numberofQuestions,5,`topics>
+

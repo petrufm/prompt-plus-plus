@@ -14,7 +14,7 @@ continue else
 ^template4<param>using params:
 `param<>
 
-^template5<>this case\
+^template5<>this case\\
 should be ok
 
 ^template6<>multiple end of lines\
@@ -23,9 +23,8 @@ should be ok
 
 should be ok
 
-^template7<>template ending with end of 
+^template7<>template ending with end of
 line
-
 
 `template0<>!
 `template1<>.

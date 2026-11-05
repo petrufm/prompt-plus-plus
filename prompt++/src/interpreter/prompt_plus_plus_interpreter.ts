@@ -77,40 +77,16 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
             //Case of escaped ` and ^ (always) 
             {
               let escapePreviousBackSlashes = false;
-              if(currentChar === '\\' && i === tmp.length - 1 && (nextBrother?.getText() === '`' || nextBrother?.getText() === '^')) {
+              if (currentChar === '\\' && i === tmp.length - 1 && (nextBrother?.getText() === '`' || nextBrother?.getText() === '^' || nextBrother?.getText().startsWith('\n'))) {
                 escapePreviousBackSlashes = true;
-              } else if (currentChar === '`' || currentChar === '^') {
+              } else if (currentChar === '`' || currentChar === '^' || currentChar === '\n') {
                 result.push(currentChar);
-                i--;
-                //This should always happen
-                escapePreviousBackSlashes = (i >= 0 && tmp.charAt(i) === '\\');
-              }
-              if (escapePreviousBackSlashes) {
-                let includeNext = false;
-                while (escapePreviousBackSlashes && i >= 0 && tmp.charAt(i) === '\\') {
-                  if (includeNext) {
-                    result.push('\\');
-                  }
-                  includeNext = !includeNext;
+                escapePreviousBackSlashes = (i >= 1 && tmp.charAt(i - 1) === '\\');
+                if (escapePreviousBackSlashes) {
                   i--;
+                } else {
+                  continue;
                 }
-                i++;
-                continue;
-              }
-            }
-
-            //Case of escaped \n\n (in a named template body)
-            if (this.interpretationStack.length > 0) {
-              let escapePreviousBackSlashes = false;
-              if (currentChar === '\\' && i === tmp.length - 1 && nextBrother?.getText() === '\n\n') {
-                escapePreviousBackSlashes = true;
-              } else if (currentChar === '\n' && i > 0 && tmp.charAt(i - 1) === '\n') {
-                result.push(currentChar);
-                result.push(currentChar);
-                i--;
-                i--;
-                //This should always happen
-                escapePreviousBackSlashes = (i >= 0 && tmp.charAt(i) === '\\');
               }
               if (escapePreviousBackSlashes) {
                 let includeNext = false;

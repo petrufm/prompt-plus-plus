@@ -21,7 +21,8 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     public static readonly Prompt_template_substitution_arg_list_natural_language_text_fragment_splice = 8;
     public static readonly Arg_list_end = 9;
     public static readonly Arg_list_separator = 10;
-    public static readonly Prompt_template_definition_body_end = 11;
+    public static readonly Prompt_template_definition_natural_language_text_fragment_splice = 11;
+    public static readonly Prompt_template_definition_body_end = 12;
     public static readonly RULE_prompt_plus_plus = 0;
     public static readonly RULE_prompt_template = 1;
     public static readonly RULE_prompt_template_substitution = 2;
@@ -31,8 +32,6 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     public static readonly RULE_prompt_template_definition_arg_list = 6;
 
     public static readonly literalNames = [
-        null, null, null, null, null, null, null, null, null, null, null, 
-        "'\\n\\n'"
     ];
 
     public static readonly symbolicNames = [
@@ -40,7 +39,8 @@ export class prompt_plus_plus_parser extends antlr.Parser {
         "Prompt_template_substitution_operator", "Prompt_template_definition_operator", 
         "Template_identifier", "Prompt_template_substitution_resolution_operator", 
         "Arg_list_begin", "Prompt_template_substitution_arg_list_natural_language_text_fragment_splice", 
-        "Arg_list_end", "Arg_list_separator", "Prompt_template_definition_body_end"
+        "Arg_list_end", "Arg_list_separator", "Prompt_template_definition_natural_language_text_fragment_splice", 
+        "Prompt_template_definition_body_end"
     ];
     public static readonly ruleNames = [
         "prompt_plus_plus", "prompt_template", "prompt_template_substitution", 
@@ -380,7 +380,7 @@ export class prompt_plus_plus_parser extends antlr.Parser {
     }
 
     public static readonly _serializedATN: number[] = [
-        4,1,11,76,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        4,1,12,76,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
         6,1,0,5,0,16,8,0,10,0,12,0,19,9,0,1,0,3,0,22,8,0,1,0,1,0,1,1,1,1,
         4,1,28,8,1,11,1,12,1,29,1,2,1,2,1,2,5,2,35,8,2,10,2,12,2,38,9,2,
         1,2,1,2,1,2,3,2,43,8,2,1,2,3,2,46,8,2,1,3,1,3,1,3,5,3,51,8,3,10,
@@ -400,7 +400,7 @@ export class prompt_plus_plus_parser extends antlr.Parser {
         0,0,0,51,54,1,0,0,0,52,50,1,0,0,0,52,53,1,0,0,0,53,7,1,0,0,0,54,
         52,1,0,0,0,55,56,3,2,1,0,56,9,1,0,0,0,57,58,5,4,0,0,58,59,5,5,0,
         0,59,61,5,7,0,0,60,62,3,12,6,0,61,60,1,0,0,0,61,62,1,0,0,0,62,63,
-        1,0,0,0,63,64,5,9,0,0,64,65,3,2,1,0,65,66,5,11,0,0,66,11,1,0,0,0,
+        1,0,0,0,63,64,5,9,0,0,64,65,3,2,1,0,65,66,5,12,0,0,66,11,1,0,0,0,
         67,72,5,5,0,0,68,69,5,10,0,0,69,71,3,12,6,0,70,68,1,0,0,0,71,74,
         1,0,0,0,72,70,1,0,0,0,72,73,1,0,0,0,73,13,1,0,0,0,74,72,1,0,0,0,
         10,17,21,27,29,36,42,45,52,61,72

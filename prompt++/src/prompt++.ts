@@ -85,6 +85,7 @@ async function interprete(
   input: string,
   moduleSearchHandler: (module: string) => Promise<string | null>
 ): Promise<string> {
+  input = input.replace(/^\uFEFF/, "");
   try {
     const charStream = CharStream.fromString(input);
     const lexer = new prompt_plus_plus_lexer(charStream);

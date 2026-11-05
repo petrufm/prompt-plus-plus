@@ -30,7 +30,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     if (res && res.text && res.text.length > 0) {
       //Interprete the input
       try {
-        const charStream = CharStream.fromString(res.text);
+        //Clear BOM and normalize line endings
+        const input = res.text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+        const charStream = CharStream.fromString(input);
         const lexer = new prompt_plus_plus_lexer(charStream);
         lexer.removeErrorListeners();
         lexer.addErrorListener(new CustomizedErrorHandler());

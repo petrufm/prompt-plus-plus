@@ -85,7 +85,8 @@ async function interprete(
   input: string,
   moduleSearchHandler: (module: string) => Promise<string | null>
 ): Promise<string> {
-  input = input.replace(/^\uFEFF/, "");
+  //Clear BOM and normalize line endings
+  input = input.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
   try {
     const charStream = CharStream.fromString(input);
     const lexer = new prompt_plus_plus_lexer(charStream);
@@ -113,11 +114,11 @@ async function main() {
     if (inFilePath.length > 0) {
       for (const filePath of inFilePath) {
         const input = fs.readFileSync(filePath, "utf-8");
-        console.log(await interprete(filePath, input, moduleSearchHandler));
+        process.stdout.write(await interprete(filePath, input, moduleSearchHandler));
       }
     } else {
       const input = fs.readFileSync(0, "utf-8");
-      console.log(await interprete("stdin", input, moduleSearchHandler));
+      process.stdout.write(await interprete("stdin", input, moduleSearchHandler));
     }
   } catch (error: any) {
     console.error(error.message);

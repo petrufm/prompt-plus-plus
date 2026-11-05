@@ -17,10 +17,10 @@ fragment Fragment_resolution_operator:
     ':' ;
 
 fragment Fragment_natural_language_text_fragment_splice:
-'\\' '\r'? '\n' ;
+    '\\''\n' ;
 
 Natural_language_text_fragment:
-    ('\\''`' | '\\''^' | '\\''\\' | '\\'~[`^\\\r\n] | ~[`^\\])+ ;
+    ('\\''`' | '\\''^' | '\\''\\' | '\\'~[`^\\\n] | ~[`^\\])+ ;
 
 Natural_language_text_fragment_splice:
     Fragment_natural_language_text_fragment_splice -> skip ;
@@ -48,7 +48,7 @@ Anything_else:
 mode PROMPT_TEMPLATE_SUBSTITUTION_ARG_LIST;
 
 Prompt_template_substitution_arg_list_natural_language_text_fragment: 
-    ('\\''`' | '\\''^' | '\\''<' | '\\''>' | '\\'',' | '\\''\\' | '\\'~[`^<>,\\\r\n] | ~[`^<>,\\])+ -> type(Natural_language_text_fragment) ;
+    ('\\''`' | '\\''^' | '\\''<' | '\\''>' | '\\'',' | '\\''\\' | '\\'~[`^<>,\\\n] | ~[`^<>,\\])+ -> type(Natural_language_text_fragment) ;
 
 Prompt_template_substitution_arg_list_natural_language_text_fragment_splice:
     Fragment_natural_language_text_fragment_splice -> skip ;
@@ -79,7 +79,7 @@ Prompt_template_definition_arg_list_separator:
 mode PROMPT_TEMPLATE_DEFINITION_BODY;
 
 Prompt_template_definition_natural_language_text_fragment:
-    ('\\''`' | '\\''^' | '\\''\\' | '\\'~[`^\\\r\n] | '\n' { this.inputStream.LA(1) !== '\n'.charCodeAt(0) }? | ~[`^\\\r\n])+ -> type(Natural_language_text_fragment); 
+    ('\\''`' | '\\''^' | '\\''\\' | '\\'~[`^\\\n] | '\n' { this.inputStream.LA(1) !== '\n'.charCodeAt(0) }? | ~[`^\\\n])+ -> type(Natural_language_text_fragment); 
 
 Prompt_template_definition_natural_language_text_fragment_splice:
     Fragment_natural_language_text_fragment_splice -> skip ;
@@ -88,4 +88,4 @@ Prompt_template_definition_prompt_template_substitution_operator:
     Fragment_substitution_operator -> pushMode(PROMPT_TEMPLATE_SUBSTITUTION), type(Prompt_template_substitution_operator) ;
 
 Prompt_template_definition_body_end:
-    '\r'? '\n' '\r'? '\n' -> popMode, popMode;
+    '\n''\n' -> popMode, popMode;

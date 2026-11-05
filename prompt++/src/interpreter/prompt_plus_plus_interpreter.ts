@@ -2,7 +2,6 @@ import { TerminalNode, CharStream, CommonTokenStream, ParseTree } from "antlr4ng
 import { Prompt_plus_plusContext, Prompt_templateContext, Prompt_template_substitutionContext, Prompt_template_substitution_arg_listContext, Named_prompt_template_definitionContext, Prompt_template_definition_arg_listContext, prompt_plus_plus_parser, Prompt_template_substitution_actual_argumentContext } from "../parser/prompt_plus_plus_parser";
 import { prompt_plus_plus_parserVisitor } from "../parser/prompt_plus_plus_parserVisitor";
 import { prompt_plus_plus_lexer } from '../parser/prompt_plus_plus_lexer';
-import { clear } from "console";
 import { CountingErrorHandler } from "../parser/prompt_error_handler";
 
 interface NamedPromptTemplate {
@@ -168,6 +167,8 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
           if (modulePath.length > 0) {
             let input = await this.moduleSearchHandler(modulePath);   
             if (input !== null) {
+              //Clear BOM and normalize line endings
+              input = input.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
               const charStream = CharStream.fromString(input);
               const lexer = new prompt_plus_plus_lexer(charStream);
               const errorCounter = new CountingErrorHandler();

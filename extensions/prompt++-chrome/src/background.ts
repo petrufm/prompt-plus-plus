@@ -53,7 +53,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
                 db.createObjectStore("handles");
               }
             });
-            const storedHandles = await db.get("handles", "promptppTemplatePath");
+            const storedHandles = await db.get("handles", "promptppTemplateFolders");
             const storedUrls = await db.get("handles", "promptppTemplateUrls");
             // Try local folders roots first
             if (storedHandles) {

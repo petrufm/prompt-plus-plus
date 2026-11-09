@@ -31,7 +31,7 @@ We can then define two specialized prompts for the two subjects:
 ```prompt++
 ^sefQuiz<numberOfQuestions,topics>`university:teaching:professorOf<Software Engineering Fundamentals,Politehnica University of Timisoara,second year students> `university:teaching:generateQuiz<`numberOfQuestions,5,`topics>
 
-^pooQuiz<numberOfQuestions,topics>`university:teaching:professorOf<Object-Oriented Programming,Politehnica University of Timisoara,second year students\, the mandatory language is Java> `university:teaching:generateQuiz<`numberOfQuestions,5,`topics>
+^oopQuiz<numberOfQuestions,topics>`university:teaching:professorOf<Object-Oriented Programming,Politehnica University of Timisoara,second year students\, the mandatory language is Java> `university:teaching:generateQuiz<`numberOfQuestions,5,`topics>
 ```
 
 To request a quiz about the waterfall process, we only need to write:
@@ -43,7 +43,7 @@ To request a quiz about the waterfall process, we only need to write:
 For an Object-Oriented Programming quiz, we can write:
 
 ```prompt++
-`pooQuiz<3,class inheritance>
+`oopQuiz<3,class inheritance>
 ```
 
 In both cases, the final prompt automatically contains the professor's context, the subject, the institution, the students' level, and the general quiz requirements. The user only needs to specify what changes from one use to another. When prompt++ is executed, it produces the complete prompts—in this cases, the same prompts we started with.

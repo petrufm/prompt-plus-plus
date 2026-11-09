@@ -4,13 +4,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { interpret, ModuleResolver } from "./core";
 
-function splitTemplatePaths(value: string): string[] {
-  return value
-    .split(";")
-    .map((part) => part.trim())
-    .filter((part) => part.length > 0);
-}
-
 function createModuleSearchHandler(templateRoots: string[]): ModuleResolver {
   const roots = templateRoots.length > 0 ? templateRoots : [process.cwd()];
   return async (module: string): Promise<string | null> => {
@@ -52,8 +45,7 @@ function createModuleSearchHandler(templateRoots: string[]): ModuleResolver {
 
 function parseArgs(rawArgs: string[]): { moduleRoots: string[]; inputFiles: string[] } {
   const inputFiles: string[] = [];
-  let moduleRoots: string[] = [];
-  let ptpSeen = false;
+  const moduleRoots: string[] = [];
   let filePathSeen = false;
 
   for (let i = 0; i < rawArgs.length; i++) {
@@ -62,14 +54,14 @@ function parseArgs(rawArgs: string[]): { moduleRoots: string[]; inputFiles: stri
       if (filePathSeen) {
         throw new Error("-ptp must appear before any input file paths");
       }
-      if (ptpSeen) {
-        throw new Error("-ptp may be specified at most once");
-      }
       if (i + 1 >= rawArgs.length) {
         throw new Error("Missing value for -ptp");
       }
-      ptpSeen = true;
-      moduleRoots = splitTemplatePaths(rawArgs[++i]);
+      const moduleRoot = rawArgs[++i].trim();
+      if (moduleRoot.length === 0) {
+        throw new Error("Missing value for -ptp");
+      }
+      moduleRoots.push(moduleRoot);
     } else {
       filePathSeen = true;
       inputFiles.push(arg);

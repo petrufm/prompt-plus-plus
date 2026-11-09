@@ -69,10 +69,33 @@ promptpp_settings_pickfolder.addEventListener("click", async () => {
 
 promptpp_settings_addUrl.addEventListener("click", async () => {
   const value = (promptpp_settings_urlInput.value || "").trim();
+  let parsedUrl: URL;
   try {
-    new URL(value);
+    parsedUrl = new URL(value);
   } catch {
     promptpp_settings_urlStatus.textContent = "Invalid URL";
+    return;
+  }
+  if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+    promptpp_settings_urlStatus.textContent = "Only HTTP and HTTPS URLs are supported";
+    return;
+  }
+  const originPattern = `${parsedUrl.protocol}//${parsedUrl.host}/*`;
+  try {
+    const hasPermission = await chrome.permissions.contains({
+      origins: [originPattern]
+    });
+    if (!hasPermission) {
+      const granted = await chrome.permissions.request({
+        origins: [originPattern]
+      });
+      if (!granted) {
+        promptpp_settings_urlStatus.textContent = "Access permission was not granted";
+        return;
+      }
+    }
+  } catch (e) {
+    promptpp_settings_urlStatus.textContent = "Failed to request URL access";
     return;
   }
   try {

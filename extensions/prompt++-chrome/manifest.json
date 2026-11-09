@@ -8,6 +8,10 @@
     "scripting",
     "activeTab"
   ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "icons": {
     "16": "resources/prompt++16.png",
     "48": "resources/prompt++48.png",
@@ -22,11 +26,5 @@
   "background": {
     "service_worker": "dist/background.js"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["dist/content.js"]
-    }
-  ],
   "options_page": "options.html"
 }

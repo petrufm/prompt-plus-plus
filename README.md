@@ -79,4 +79,7 @@ Named prompt++ definitions can receive parameters and can use other named prompt
 
 ## CLI, API and Chrome Extension
 
-prompt++ can be executed from the command line or interpreted programmatically through the TypeScript API. These usage modes, as well as the Chrome extension integration, will be documented later.
+prompt++ can be executed from the command line or interpreted programmatically through the TypeScript API. These usage modes, as well as the Chrome extension integration, will be documented later. However, you can see here how to use the chrome extension ;).
+
+https://github.com/user-attachments/assets/5a35796c-081c-4a5e-b385-7ec652cf4e4b
+

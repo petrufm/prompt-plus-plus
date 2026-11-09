@@ -1,9 +1,27 @@
 import { openDB } from "idb";
 
-import { CharStream, CommonTokenStream, ANTLRErrorListener, ATNConfigSet, BitSet, DFA, Parser, ATNSimulator, RecognitionException, Recognizer, Token } from "antlr4ng";
-import { prompt_plus_plus_lexer } from "prompt-plus-plus";
-import { prompt_plus_plus_parser } from "prompt-plus-plus";
-import { PromptPlusPlusInterpreter } from "prompt-plus-plus";
+import { interpret, ModuleResolver } from "prompt-plus-plus";
+
+async function sendMessageToContentScript<T = unknown>(
+  tabId: number,
+  message: { type: string; text?: string }
+): Promise<T> {
+  try {
+    return await chrome.tabs.sendMessage(tabId, message);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (!errorMessage.includes("Receiving end does not exist")) {
+      throw error;
+    }
+
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: ["dist/content.js"]
+    });
+
+    return await chrome.tabs.sendMessage(tabId, message);
+  }
+}
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
@@ -24,25 +42,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId !== "promptpp_substitute" || !tab?.id) {
      return;
     }
-    const res = await chrome.tabs.sendMessage(tab.id, {
+    const res = await sendMessageToContentScript<{ text?: string }>(tab.id, {
        type: "PROMPTPP_GET_TEXT"
     });
     if (res && res.text && res.text.length > 0) {
-      //Interprete the input
       try {
-        //Clear BOM and normalize line endings
-        const input = res.text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
-        const charStream = CharStream.fromString(input);
-        const lexer = new prompt_plus_plus_lexer(charStream);
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(new CustomizedErrorHandler());
-        const tokens = new CommonTokenStream(lexer);
-        const parser = new prompt_plus_plus_parser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new CustomizedErrorHandler());
-        const tree = parser.prompt_plus_plus();
-        if (parser.numberOfSyntaxErrors === 0) {
-          const interpreter = new PromptPlusPlusInterpreter(async (searchedModule : string) : Promise<string | null> => {
+        const moduleResolver: ModuleResolver = async (searchedModule: string): Promise<string | null> => {
             const db = await openDB("promptpp", 1, {
               upgrade(db) {
                 db.createObjectStore("handles");
@@ -90,14 +95,18 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
               }
             }
             return null;
-          });
-          const result = (await tree.accept(interpreter) as string[])[0];
+        };
+        const result = await interpret(res.text, moduleResolver, "browser input", {
+          removeDefaultErrorListeners: true,
+          onSyntaxError: ({ line, column, message }) => {
+            throw new Error(`Syntax error at line ${line}, column ${column}: ${message}`);
+          }
+        });
           //Replace with the result
-          chrome.tabs.sendMessage(tab.id, {
+          await sendMessageToContentScript(tab.id, {
             type: "PROMPTPP_SET_TEXT",
             text: result
           });
-        }
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         chrome.scripting.executeScript({
@@ -110,16 +119,3 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       }
     } 
 });
-
- class CustomizedErrorHandler implements ANTLRErrorListener {
-    syntaxError<S extends Token, T extends ATNSimulator>(recognizer: Recognizer<T>, offendingSymbol: S | null, line: number, charPositionInLine: number, msg: string, e: RecognitionException | null): void {
-      const customMessage = `Syntax error at line ${line}, column ${charPositionInLine}: ${msg}`;        
-      throw new Error(customMessage);
-    }
-    reportAmbiguity(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number, exact: boolean, ambigAlts: BitSet | undefined, configs: ATNConfigSet): void {
-    }
-    reportAttemptingFullContext(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number, conflictingAlts: BitSet | undefined, configs: ATNConfigSet): void {
-    }
-    reportContextSensitivity(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number, prediction: number, configs: ATNConfigSet): void {
-    }
-}

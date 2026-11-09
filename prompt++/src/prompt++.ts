@@ -1,11 +1,8 @@
+#!/usr/bin/env node
+
 import * as fs from "fs";
 import * as path from "path";
-
-import { CharStream, CommonTokenStream } from "antlr4ng";
-import { prompt_plus_plus_lexer } from "./parser/prompt_plus_plus_lexer";
-import { prompt_plus_plus_parser } from "./parser/prompt_plus_plus_parser";
-import { PromptPlusPlusInterpreter, InterpretationError } from "./interpreter/prompt_plus_plus_interpreter";
-import { CountingErrorHandler } from "./parser/prompt_error_handler";
+import { interpret, ModuleResolver } from "./core";
 
 function splitTemplatePaths(value: string): string[] {
   return value
@@ -14,7 +11,7 @@ function splitTemplatePaths(value: string): string[] {
     .filter((part) => part.length > 0);
 }
 
-function createModuleSearchHandler(templateRoots: string[]) {
+function createModuleSearchHandler(templateRoots: string[]): ModuleResolver {
   const roots = templateRoots.length > 0 ? templateRoots : [process.cwd()];
   return async (module: string): Promise<string | null> => {
     if (module.length === 0) {
@@ -28,6 +25,7 @@ function createModuleSearchHandler(templateRoots: string[]) {
       } catch {
         isUrl = false;
       }
+
       if (isUrl) {
         try {
           const rootUrl = root.endsWith("/") ? root : `${root}/`;
@@ -37,10 +35,10 @@ function createModuleSearchHandler(templateRoots: string[]) {
             return await response.text();
           }
         } catch {
-          // Ignore fetch failures
+          // Try the next module root.
         }
       } else {
-        const absFilePath = path.isAbsolute(root) 
+        const absFilePath = path.isAbsolute(root)
           ? path.join(root, moduleFilePath)
           : path.resolve(process.cwd(), root, moduleFilePath);
         if (fs.existsSync(absFilePath) && fs.statSync(absFilePath).isFile()) {
@@ -52,8 +50,8 @@ function createModuleSearchHandler(templateRoots: string[]) {
   };
 }
 
-function parseArgs(rawArgs: string[]): { moduleRoots: string[]; inFilePath: string[] } {
-  const inFilePath: string[] = [];
+function parseArgs(rawArgs: string[]): { moduleRoots: string[]; inputFiles: string[] } {
+  const inputFiles: string[] = [];
   let moduleRoots: string[] = [];
   let ptpSeen = false;
   let filePathSeen = false;
@@ -74,56 +72,31 @@ function parseArgs(rawArgs: string[]): { moduleRoots: string[]; inFilePath: stri
       moduleRoots = splitTemplatePaths(rawArgs[++i]);
     } else {
       filePathSeen = true;
-      inFilePath.push(arg);
+      inputFiles.push(arg);
     }
   }
-  return { moduleRoots, inFilePath };
+
+  return { moduleRoots, inputFiles };
 }
 
-async function interprete(
-  fileInput: string,
-  input: string,
-  moduleSearchHandler: (module: string) => Promise<string | null>
-): Promise<string> {
-  //Clear BOM and normalize line endings
-  input = input.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
-  try {
-    const charStream = CharStream.fromString(input);
-    const lexer = new prompt_plus_plus_lexer(charStream);
-    const errorCounter = new CountingErrorHandler();
-    lexer.addErrorListener(errorCounter);
-    const tokens = new CommonTokenStream(lexer);
-    const parser = new prompt_plus_plus_parser(tokens);
-    const tree = parser.prompt_plus_plus();
-    if (parser.numberOfSyntaxErrors == 0 && !errorCounter.hasErrors()) {
-      const interpreter = new PromptPlusPlusInterpreter(moduleSearchHandler);
-      return (await tree.accept(interpreter) as string[])[0];
-    } else {
-        throw new InterpretationError(`Syntax errors in prompt template module: ${fileInput}`);
-    }
-  } catch (error: any) {
-    console.error("Error processing ", fileInput, ":", error.message);
-  }
-  return "";
-}
+export async function main(rawArgs = process.argv.slice(2)): Promise<void> {
+  const { moduleRoots, inputFiles } = parseArgs(rawArgs);
+  const moduleSearchHandler = createModuleSearchHandler(moduleRoots);
 
-async function main() {
-  try {
-    const { moduleRoots, inFilePath } = parseArgs(process.argv.slice(2));
-    const moduleSearchHandler = createModuleSearchHandler(moduleRoots);
-    if (inFilePath.length > 0) {
-      for (const filePath of inFilePath) {
-        const input = fs.readFileSync(filePath, "utf-8");
-        process.stdout.write(await interprete(filePath, input, moduleSearchHandler));
-      }
-    } else {
-      const input = fs.readFileSync(0, "utf-8");
-      process.stdout.write(await interprete("stdin", input, moduleSearchHandler));
+  if (inputFiles.length > 0) {
+    for (const filePath of inputFiles) {
+      const input = fs.readFileSync(filePath, "utf-8");
+      process.stdout.write(await interpret(input, moduleSearchHandler, filePath));
     }
-  } catch (error: any) {
-    console.error(error.message);
-    process.exit(1);
+  } else {
+    const input = fs.readFileSync(0, "utf-8");
+    process.stdout.write(await interpret(input, moduleSearchHandler, "stdin"));
   }
 }
 
-main();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((error: unknown) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  });
+}

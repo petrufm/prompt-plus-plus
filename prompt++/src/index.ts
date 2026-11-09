@@ -1,3 +1,3 @@
-export * from "./interpreter/prompt_plus_plus_interpreter";
-export * from "./parser/prompt_plus_plus_parser";
-export * from "./parser/prompt_plus_plus_lexer";
+export { interpret } from "./core";
+export type { InterpretOptions, ModuleResolver } from "./core";
+export type { SyntaxErrorCallback, SyntaxErrorDetails } from "./parser/prompt_error_handler";

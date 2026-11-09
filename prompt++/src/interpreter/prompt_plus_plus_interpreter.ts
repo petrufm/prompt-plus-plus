@@ -2,7 +2,7 @@ import { TerminalNode, CharStream, CommonTokenStream, ParseTree } from "antlr4ng
 import { Prompt_plus_plusContext, Prompt_templateContext, Prompt_template_substitutionContext, Prompt_template_substitution_arg_listContext, Named_prompt_template_definitionContext, Prompt_template_definition_arg_listContext, prompt_plus_plus_parser, Prompt_template_substitution_actual_argumentContext } from "../parser/prompt_plus_plus_parser";
 import { prompt_plus_plus_parserVisitor } from "../parser/prompt_plus_plus_parserVisitor";
 import { prompt_plus_plus_lexer } from '../parser/prompt_plus_plus_lexer';
-import { CountingErrorHandler } from "../parser/prompt_error_handler";
+import { CountingErrorHandler, SyntaxErrorCallback } from "../parser/prompt_error_handler";
 
 interface NamedPromptTemplate {
   name: string;
@@ -27,7 +27,11 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
 
   private moduleStack = new Array<string>();
 
-  constructor(moduleSearchHandler : (module: string) => Promise<string | null>) {
+  constructor(
+    moduleSearchHandler: (module: string) => Promise<string | null>,
+    private readonly onSyntaxError?: SyntaxErrorCallback,
+    private readonly removeDefaultErrorListeners = false
+  ) {
     
     super();
       
@@ -171,10 +175,17 @@ export class PromptPlusPlusInterpreter extends prompt_plus_plus_parserVisitor<Pr
               input = input.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
               const charStream = CharStream.fromString(input);
               const lexer = new prompt_plus_plus_lexer(charStream);
-              const errorCounter = new CountingErrorHandler();
+              if (this.removeDefaultErrorListeners) {
+                lexer.removeErrorListeners();
+              }
+              const errorCounter = new CountingErrorHandler(modulePath, this.onSyntaxError);
               lexer.addErrorListener(errorCounter);
               const tokens = new CommonTokenStream(lexer);
               const parser = new prompt_plus_plus_parser(tokens);
+              if (this.removeDefaultErrorListeners) {
+                parser.removeErrorListeners();
+              }
+              parser.addErrorListener(errorCounter);
               const tree = parser.prompt_plus_plus();
               if (parser.numberOfSyntaxErrors == 0 && !errorCounter.hasErrors()) {
                 this.moduleStack.push(modulePath);

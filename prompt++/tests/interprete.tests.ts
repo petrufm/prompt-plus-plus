@@ -4,7 +4,9 @@ import path from "path";
 import { describe, it, expect } from '@jest/globals';
 
 import { CharStream, CommonTokenStream } from "antlr4ng";
-import { prompt_plus_plus_lexer, prompt_plus_plus_parser, PromptPlusPlusInterpreter } from "../src";
+import { prompt_plus_plus_lexer } from "../src/parser/prompt_plus_plus_lexer";
+import { prompt_plus_plus_parser } from "../src/parser/prompt_plus_plus_parser";
+import { PromptPlusPlusInterpreter } from "../src/interpreter/prompt_plus_plus_interpreter";
 
 describe.each([
   { input: 't0.prompt++', expected: 't0.expected.txt' },

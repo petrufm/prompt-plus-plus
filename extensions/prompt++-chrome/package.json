@@ -1,6 +1,6 @@
 {
   "name": "prompt-plus-plus-chrome-extension",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "dependencies": {
     "idb": "^8.x.x",
     "prompt-plus-plus": "*"

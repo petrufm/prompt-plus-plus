@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "prompt-plus-plus-chrome-extension",
-  "version": "1.0",
+  "version": "0.1.0",
   "description": "Interprets and replaces text using prompt++",
   "permissions": [
     "contextMenus",

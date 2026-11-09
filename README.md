@@ -1,5 +1,8 @@
 # prompt++
 
+**Status:** Experimental  
+**Version:** 0.1.0
+
 ## The problem
 
 When using language models, we often end up writing and rewriting the same prompt. For example, a professor may want to generate quizzes for several subjects.
